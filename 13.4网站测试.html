@@ -1,0 +1,2197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>独行测试网</title>
+<style>
+*{box-sizing:border-box}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#f0f2f5;margin:0;padding:16px;color:#333;font-size:14px}
+.app{max-width:1360px;margin:0 auto}
+header.site-header{display:flex;justify-content:space-between;align-items:baseline;padding:0 4px;margin-bottom:14px;flex-wrap:wrap;gap:6px}
+.site-title{font-size:22px;font-weight:bold;color:#1e293b;margin:0}
+.site-sub{font-size:11px;color:#94a3b8}
+.tab-nav{display:flex;gap:4px;background:#fff;border-radius:10px;padding:6px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.tab-btn{flex:1;padding:10px 8px;background:transparent;color:#64748b;font-size:14px;border-radius:6px;font-weight:500;border:none;cursor:pointer}
+.tab-btn.active{background:#3b82f6;color:#fff}
+.tab-panel{display:none}.tab-panel.active{display:block}
+.card{background:#fff;border-radius:10px;padding:16px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.card h2{font-size:15px;margin:0 0 12px;color:#334155;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.badge{background:#e0e7ff;color:#3730a3;font-size:11px;padding:2px 8px;border-radius:10px}
+.badge.warn{background:#fef3c7;color:#92400e}
+.badge.green{background:#d1fae5;color:#065f46}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+input,select,textarea{padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:14px;font-family:inherit}
+input[type=number]{width:80px}
+button{padding:8px 14px;border:none;border-radius:6px;background:#3b82f6;color:#fff;font-size:13px;cursor:pointer;font-family:inherit}
+button:hover{background:#2563eb}
+button.gray{background:#e2e8f0;color:#333}
+button.green{background:#10b981}
+button.red{background:#ef4444}
+button.orange{background:#f59e0b}
+button.purple{background:#8b5cf6}
+button.small{padding:5px 10px;font-size:12px}
+.status{padding:8px 12px;border-radius:6px;font-size:13px;margin-top:8px;display:none}
+.status.ok{background:#f0fdf4;color:#166534;display:block}
+.status.err{background:#fef2f2;color:#991b1b;display:block}
+.status.info{background:#eff6ff;color:#1e40af;display:block}
+.hint{font-size:12px;color:#94a3b8;margin-top:6px;line-height:1.6}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{border-bottom:1px solid #e5e7eb;padding:6px;text-align:center;vertical-align:middle}
+th{background:#f8fafc;font-weight:500;color:#475569;font-size:12px}
+.hit{color:#16a34a;font-weight:bold}
+.miss{color:#dc2626}
+.empty{text-align:center;color:#94a3b8;padding:20px;font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px}
+.sbox{background:#f8fafc;border-radius:8px;padding:14px 8px;text-align:center}
+.sbox .v{font-size:20px;font-weight:bold;color:#2563eb}
+.sbox .l{font-size:12px;color:#64748b;margin-top:4px}
+.sbox.plus .v{color:#16a34a}.sbox.minus .v{color:#dc2626}
+.sbox.hl{background:#fef3c7}.sbox.hl .v{color:#b45309}.sbox.hl .l{color:#92400e;font-weight:bold}
+.sbox.hl2{background:#dbeafe}.sbox.hl2 .v{color:#1d4ed8}
+.sbox.hl3{background:#d1fae5}.sbox.hl3 .v{color:#065f46}
+.rec-wrap{display:grid;gap:10px}
+.rec-section{background:#f8fafc;border-radius:10px;padding:12px 14px;border:1px solid #e2e8f0}
+.rec-section-title{font-size:12px;color:#64748b;font-weight:600;margin-bottom:8px;letter-spacing:.5px}
+.rec-section.zi{background:linear-gradient(135deg,#eff6ff,#dbeafe);border-color:#bfdbfe}
+.rec-section.zi .rec-section-title{color:#1e40af}
+.rec-section.tail{background:linear-gradient(135deg,#fef3c7,#fde68a);border-color:#fcd34d}
+.rec-section.tail .rec-section-title{color:#92400e}
+.rec-section.sp{background:linear-gradient(135deg,#f5f3ff,#ede9fe);border-color:#ddd6fe}
+.rec-section.sp .rec-section-title{color:#5b21b6}
+.rec-section.t3{background:linear-gradient(135deg,#ecfdf5,#d1fae5);border-color:#a7f3d0}
+.rec-section.t3 .rec-section-title{color:#065f46}
+.zi-layers{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.zi-layer{background:#fff;border-radius:8px;padding:8px 10px;border:1px solid #bfdbfe}
+.zi-layer .lbl{font-size:11px;color:#64748b;font-weight:600;margin-bottom:4px}
+.zi-layer .val{font-size:20px;font-weight:bold;color:#1e40af;letter-spacing:2px}
+.zi-layer.l1{background:#dc2626;border-color:#dc2626}
+.zi-layer.l1 .lbl{color:#fecaca}
+.zi-layer.l1 .val{color:#fff}
+.tail-chips{display:flex;gap:10px;flex-wrap:wrap}
+.tail-chip{width:56px;height:56px;border-radius:50%;background:#fff;border:2px solid #f59e0b;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:bold;color:#b45309}
+.num-row{display:flex;gap:6px;flex-wrap:wrap}
+.num-pill{display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:34px;padding:0 8px;border-radius:8px;font-weight:bold;font-size:14px}
+.num-pill.s5{background:#dc2626;color:#fff}
+.num-pill.s8{background:#ea580c;color:#fff}
+.num-pill.s10{background:#f59e0b;color:#fff}
+.num-pill.t3a{background:#059669;color:#fff}
+.num-pill.t3b{background:#0891b2;color:#fff}
+.sp-group{margin-bottom:10px}
+.sp-group:last-child{margin-bottom:0}
+.sp-label{font-size:11px;color:#7c3aed;font-weight:bold;margin-bottom:4px}
+.record-wrap{max-height:75vh;overflow-y:auto;border:1px solid #e2e8f0;border-radius:8px}
+.record-table th{position:sticky;top:0;background:linear-gradient(180deg,#f8fafc,#eef2f7);z-index:5;font-size:11px;padding:4px}
+.record-table td{padding:4px 3px;font-size:11px}
+.issue-tag{display:inline-block;padding:2px 6px;background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;border-radius:5px;font-size:11px;font-weight:bold;min-width:36px}
+.issue-tag.pending{background:linear-gradient(135deg,#f59e0b,#d97706)}
+.issue-tag.empty{background:linear-gradient(135deg,#94a3b8,#475569)}
+.date-cell{font-size:11px;color:#475569;white-space:nowrap}
+.nums-balls{display:inline-flex;gap:3px;justify-content:center;flex-wrap:wrap}
+.num-zodiac-pair{display:inline-flex;flex-direction:column;align-items:center;margin:0 1px}
+.num-zodiac-pair .num-ball{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#3b82f6;color:#fff;font-weight:bold;font-size:10px}
+.num-zodiac-pair .num-ball.special{background:#f59e0b}
+.num-zodiac-pair .zodiac-label{font-size:9px;color:#475569;margin-top:1px;font-weight:bold;background:#f1f5f9;border-radius:3px;padding:0 2px}
+.num-zodiac-pair.special-pair .zodiac-label{color:#b45309;background:#fef3c7}
+.zodiac-record .zc{display:inline-block;padding:1px 4px;margin:1px;border-radius:3px;font-weight:bold;font-size:10px}
+.zodiac-record .zc.core-hit{background:#dc2626;color:#fff}
+.zodiac-record .zc.hit{background:#16a34a;color:#fff}
+.zodiac-record .zc.miss{background:#e2e8f0;color:#94a3b8}
+.zodiac-record .zc.core{background:#fee2e2;color:#991b1b}
+.hl-num{display:inline-block;background:#dcfce7;color:#166534;font-weight:bold;padding:0 3px;border-radius:3px;margin:0 1px;box-shadow:0 0 0 1px #86efac inset}
+.no-num{display:inline-block;color:#94a3b8;padding:0 2px}
+.trend-table{width:100%;font-size:12px;border-collapse:collapse}
+.trend-table th{position:sticky;top:0;background:#f1f5f9;padding:6px}
+.trend-table td{padding:6px;border-bottom:1px solid #f1f5f9}
+.trend-row.hit{background:#f0fdf4}
+.trend-row.miss{background:#fef2f2}
+.money-box{background:#f8fafc;border-radius:8px;padding:12px;text-align:center;border:1px solid #e2e8f0}
+.money-box .v{font-size:22px;font-weight:bold;color:#2563eb}
+.money-box .l{font-size:12px;color:#64748b;margin-top:4px}
+.money-box.gain{background:#f0fdf4;border-color:#86efac}
+.money-box.gain .v{color:#16a34a}
+.money-box.loss{background:#fef2f2;border-color:#fca5a5}
+.money-box.loss .v{color:#dc2626}
+.plan-table{width:100%;border-collapse:collapse;font-size:13px;background:#fff}
+.plan-table th{background:#eff6ff;color:#1e40af;font-weight:600;padding:6px 4px;font-size:12px}
+.plan-table td{padding:5px 4px;border-bottom:1px solid #e2e8f0;vertical-align:middle}
+.plan-table input[type=text]{padding:4px 6px;font-size:12px;width:100%;min-width:80px}
+.plan-table input[type=number]{padding:4px 6px;font-size:12px;width:60px}
+.plan-table .ck{width:26px;height:26px;cursor:pointer}
+.plan-table tr.disabled{background:#f8fafc;opacity:.5}
+.plan-table .row-label{font-weight:bold;color:#334155;font-size:12px;text-align:left;padding-left:8px}
+.plan-table .subtotal{color:#b45309;font-weight:bold;font-size:13px}
+.plan-total-bar{background:#fef3c7;padding:10px 14px;border-radius:6px;margin-top:8px;display:flex;justify-content:space-between;align-items:center;font-size:14px}
+.plan-total-bar b{font-size:20px;color:#b45309}
+.mini-stats{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;font-size:12px}
+.mini-stats .ms{background:#f8fafc;border-radius:6px;padding:8px;text-align:center}
+.mini-stats .ms .v{font-size:16px;font-weight:bold;color:#2563eb}
+.mini-stats .ms .l{color:#64748b;font-size:11px}
+.rank-item{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:13px}
+.rank-item .name{width:60px;text-align:right;font-weight:bold;color:#334155;font-size:12px}
+.rank-item .bar-bg{flex:1;background:#f1f5f9;border-radius:4px;height:20px;overflow:hidden}
+.rank-item .bar-fill{height:100%;background:linear-gradient(90deg,#60a5fa,#2563eb);display:flex;align-items:center;justify-content:flex-end;padding-right:6px;color:#fff;font-size:11px;font-weight:bold}
+.rank-item.hot .bar-fill{background:linear-gradient(90deg,#f59e0b,#dc2626)}
+.rank-item.cold .bar-fill{background:linear-gradient(90deg,#94a3b8,#475569)}
+.rank-item .cnt{width:90px;text-align:right;color:#64748b;font-size:12px}
+.tab-group{display:inline-flex;background:#f1f5f9;border-radius:6px;padding:2px;margin-bottom:10px;margin-right:6px}
+.tab-group button{background:transparent;color:#64748b;padding:5px 14px;border-radius:4px;font-size:12px}
+.tab-group button.active{background:#fff;color:#2563eb;font-weight:bold;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.side-quick-nav{position:fixed;left:14px;top:50%;transform:translateY(-50%);z-index:999}
+.side-quick-nav .sqn-toggle{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 6px 18px rgba(37,99,235,.45)}
+.side-quick-nav .sqn-list{display:none;position:absolute;left:58px;top:50%;transform:translateY(-50%);background:#fff;border-radius:12px;padding:8px;box-shadow:0 10px 40px rgba(0,0,0,.18);flex-direction:column;max-height:82vh;overflow-y:auto;min-width:180px;border:1px solid #e2e8f0}
+.side-quick-nav.open .sqn-list{display:flex}
+.side-quick-nav .sqn-title{font-size:11px;color:#94a3b8;padding:4px 12px 8px;font-weight:bold;border-bottom:1px solid #e2e8f0;margin-bottom:4px}
+.side-quick-nav .sqn-list a{padding:7px 12px;border-radius:6px;color:#475569;font-size:13px;cursor:pointer;white-space:nowrap;text-decoration:none}
+.side-quick-nav .sqn-list a:hover{background:#eff6ff;color:#2563eb}
+.modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:1000;align-items:center;justify-content:center;padding:20px}
+.modal.show{display:flex}
+.modal-box{background:#fff;border-radius:12px;padding:20px;max-width:680px;width:100%;max-height:90vh;overflow-y:auto}
+.modal-field{margin-bottom:10px}
+.modal-field label{display:block;font-size:12px;color:#64748b;margin-bottom:4px}
+.modal-field input{width:100%}
+.play-summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.ball-red{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#ef4444;color:#fff;font-weight:bold;font-size:10px;margin:1px}
+.ball-blue{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#3b82f6;color:#fff;font-weight:bold;font-size:10px;margin:1px}
+.alert-bar{padding:12px 16px;border-radius:8px;margin-bottom:14px;display:none;line-height:1.7;font-size:14px}
+.alert-bar.show{display:block}
+.alert-bar.warn{background:#fffbeb;border-left:5px solid #f59e0b;color:#78350f}
+.alert-bar.warn b{color:#b45309;font-size:15px}
+.alert-bar .fix-btn{background:#f59e0b;color:#fff;padding:8px 18px;border-radius:6px;font-weight:bold;margin-left:12px;font-size:14px;cursor:pointer;border:none}
+.alert-bar .fix-btn:hover{background:#d97706}
+.diary-item{padding:10px 12px;border-left:3px solid #3b82f6;background:#f8fafc;border-radius:4px;margin-bottom:8px;font-size:13px;line-height:1.7}
+.diary-item .d-date{color:#3b82f6;font-weight:bold;font-size:12px;margin-right:8px}
+.diary-item .d-ver{background:#dbeafe;color:#1e40af;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:bold;margin-right:6px}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="site-header">
+  <h1 class="site-title">独行测试网</h1>
+  <div class="site-sub">v46 · <span id="modeTag"></span></div>
+</header>
+
+<nav class="tab-nav">
+  <button class="tab-btn active" data-tab="lottery">🔮 六合彩</button>
+  <button class="tab-btn" data-tab="dlt">🎯 超级大乐透</button>
+  <button class="tab-btn" data-tab="ssq">🎱 双色球</button>
+</nav>
+
+<div id="tab-lottery" class="tab-panel active">
+
+  <div class="alert-bar warn" id="gapAlert">
+    <div>
+      <b>⚠️ 检测到 <span id="gapCount">0</span> 期空缺未锁定</b>（<span id="gapAlertTxt"></span>）<br>
+      <span style="font-size:13px;">补锁会用这些日期之前的历史数据生成推荐。若连续空缺多期，系统会自动加"期号扰动"避免所有期推荐雷同。</span>
+    </div>
+    <button class="fix-btn" id="gapFixBtn">🔄 一键补锁</button>
+  </div>
+
+  <div class="card">
+    <h2>⚙️ API 配置（截图识别用）</h2>
+    <div class="row">
+      <input type="password" id="apiKey" placeholder="智谱 API Key" style="flex:1;min-width:280px;">
+      <button id="saveKey" class="green">保存</button>
+      <button id="testKey" class="orange">🔌 测试连接</button>
+      <button id="clearKey" class="gray">清除</button>
+    </div>
+    <div class="status" id="cfgStatus"></div>
+  </div>
+
+  <div class="card" id="card-rec">
+    <h2>🎯 本期推荐 <span id="recTitle" class="badge">加载中</span></h2>
+    <div class="rec-wrap">
+      <div class="rec-section zi">
+        <div class="rec-section-title">🐲 生肖推荐（累计层级）</div>
+        <div class="zi-layers">
+          <div class="zi-layer l1"><div class="lbl">1 核心</div><div class="val" id="recZi1">-</div></div>
+          <div class="zi-layer"><div class="lbl">2 核心</div><div class="val" id="recZi2">- -</div></div>
+          <div class="zi-layer"><div class="lbl">3 核心</div><div class="val" id="recZi3">- - -</div></div>
+          <div class="zi-layer"><div class="lbl">4 核心</div><div class="val" id="recZi4">- - - -</div></div>
+        </div>
+      </div>
+      <div class="rec-section tail">
+        <div class="rec-section-title">🎯 推荐尾号（3个）</div>
+        <div class="tail-chips" id="recTailChips"></div>
+      </div>
+      <div class="rec-section sp">
+        <div class="rec-section-title">💰 特码推荐（3 层）</div>
+        <div class="sp-group"><div class="sp-label">A层 · 5 个</div><div class="num-row" id="recSp5"></div></div>
+        <div class="sp-group"><div class="sp-label">B层 · 8 个</div><div class="num-row" id="recSp8"></div></div>
+        <div class="sp-group"><div class="sp-label">C层 · 10 个</div><div class="num-row" id="recSp10"></div></div>
+      </div>
+      <div class="rec-section t3">
+        <div class="rec-section-title">⭐ 3中3 推荐（2 组）</div>
+        <div class="sp-group"><div class="sp-label" style="color:#065f46;">A组 · 5 个号码</div><div class="num-row" id="recT3A"></div></div>
+        <div class="sp-group"><div class="sp-label" style="color:#0891b2;">B组 · 6 个号码</div><div class="num-row" id="recT3B"></div></div>
+      </div>
+    </div>
+    <div style="background:#ecfdf5;border-left:3px solid #10b981;padding:10px 12px;border-radius:6px;margin-top:12px;">
+      <div style="font-size:13px;color:#065f46;font-weight:bold;margin-bottom:8px;">🔒 锁定本期推荐（存入"待开奖"）</div>
+      <div class="row">
+        <label style="font-size:13px;">期号：</label>
+        <input type="text" id="recLockIssue" style="width:80px;">
+        <label style="font-size:13px;">日期：</label>
+        <input type="date" id="recLockDate" style="width:150px;">
+        <button class="green" id="lockCurrentBtn">🔒 锁定本期推荐</button>
+      </div>
+      <div class="status" id="lockStatus" style="margin-top:6px;"></div>
+    </div>
+  </div>
+
+  <div class="card" id="card-record">
+    <h2>📖 开奖记录 <span id="allCount" class="badge">0</span> <span id="pendingCount" class="badge warn">待开奖 0</span></h2>
+    <div class="row" style="margin-bottom:10px;">
+      <input type="text" id="filterIssue" placeholder="搜期号" style="width:90px;">
+      <select id="recordRange" style="width:100px;">
+        <option value="all">全部</option><option value="7">近7期</option>
+        <option value="15">近15期</option><option value="30">近30期</option>
+      </select>
+      <button id="filterClear" class="gray small">清除</button>
+      <span class="hint" style="margin:0;">🟢 绿底 = 命中的号码</span>
+    </div>
+    <div class="record-wrap">
+      <table class="record-table" style="min-width:1620px;"><thead><tr>
+        <th>期号</th><th>日期</th><th>开奖</th>
+        <th>尾号<br>推荐</th><th>尾号<br>命中</th>
+        <th>生肖<br>推荐</th><th>生肖<br>中</th>
+        <th>3中3A<br>(5个)</th><th>3中3B<br>(6个)</th>
+        <th>特码5<br>(A层)</th><th>特码8<br>(B层)</th><th>特码10<br>(C层)</th>
+        <th>操作</th>
+      </tr></thead><tbody id="allBody"></tbody></table>
+    </div>
+  </div>
+
+  <div class="card" id="card-manual">
+    <h2>📸 录入开奖一期</h2>
+    <div class="row" style="margin-bottom:8px;">
+      <input type="text" id="mIssue" placeholder="期号" style="width:90px;">
+      <input type="date" id="mDate" style="width:150px;">
+      <button id="mPickImg" class="purple">📎 上传截图</button>
+      <button id="mOcrBtn" class="orange">🔍 AI 识别</button>
+      <input type="file" id="mImgInput" accept="image/*" style="display:none">
+    </div>
+    <div class="row" style="margin-bottom:8px;">
+      <input type="number" class="mNum" placeholder="1" min="1" max="49" style="width:52px;">
+      <input type="number" class="mNum" placeholder="2" min="1" max="49" style="width:52px;">
+      <input type="number" class="mNum" placeholder="3" min="1" max="49" style="width:52px;">
+      <input type="number" class="mNum" placeholder="4" min="1" max="49" style="width:52px;">
+      <input type="number" class="mNum" placeholder="5" min="1" max="49" style="width:52px;">
+      <input type="number" class="mNum" placeholder="6" min="1" max="49" style="width:52px;">
+      <input type="number" id="mSpecial" placeholder="特" min="1" max="49" style="width:52px;border:2px solid #f59e0b;">
+    </div>
+    <div id="mZodiacHint" style="font-size:12px;color:#475569;margin:6px 0;"></div>
+    <div id="mImgPreview" style="margin:8px 0;"></div>
+    <button id="mSave" class="green">保存</button>
+    <div class="status" id="mStatus"></div>
+  </div>
+
+  <div class="card" id="card-money">
+    <h2>💰 购彩账本（模拟盘）</h2>
+    <div style="background:#fffbeb;border-left:3px solid #f59e0b;padding:12px 14px;border-radius:6px;font-size:13px;color:#78350f;line-height:1.9;margin-bottom:12px;">
+      <b>📖 使用说明：</b>每行 = 一种玩法。小计 = <b>号码数量 × 每号注数 × 每注金额</b>。例：尾号 1 2 5 共 15 个号码，每号 1 注 × 5 元 = 75 元。所有数字都能手动改。
+    </div>
+    <div class="row" style="margin-bottom:10px;">
+      <label>期号：</label>
+      <input type="text" id="betIssue" style="width:80px;">
+      <label>日期：</label>
+      <input type="date" id="betDate" style="width:150px;">
+      <button class="green" id="betLockAll">📥 一键锁定本期全部推荐</button>
+      <button class="gray small" id="betAddRow">➕ 手动加一行</button>
+    </div>
+    <div id="betPlanWrap" style="display:none;margin-bottom:12px;">
+      <div style="font-size:13px;color:#1e40af;font-weight:bold;margin-bottom:8px;">📋 本期投注计划</div>
+      <div class="record-wrap" style="max-height:450px;background:#fff;padding:0;overflow-x:auto;">
+        <table class="plan-table" style="min-width:1000px;">
+          <thead>
+            <tr>
+              <th style="width:40px;">买</th>
+              <th style="width:90px;">玩法</th>
+              <th style="min-width:150px;">号码/生肖</th>
+              <th style="width:70px;">号码数量</th>
+              <th style="width:70px;">每号注数</th>
+              <th style="width:70px;">每注金额</th>
+              <th style="width:60px;">赔率</th>
+              <th style="width:90px;">小计</th>
+              <th style="width:40px;">删</th>
+            </tr>
+          </thead>
+          <tbody id="betPlanBody"></tbody>
+        </table>
+      </div>
+      <div class="plan-total-bar">
+        <span>已勾选 <b id="betPlanCount">0</b> 种玩法</span>
+        <span>总合计：<b id="betPlanTotal">0.00</b> 元</span>
+      </div>
+      <div class="row" style="margin-top:10px;">
+        <button class="green" id="betPlanSave">✓ 全部加入账本</button>
+        <button class="gray small" id="betPlanCancel">取消计划</button>
+      </div>
+    </div>
+    <h3 style="font-size:13px;color:#475569;margin:16px 0 8px;">各玩法汇总</h3>
+    <div class="play-summary-grid" id="playSummary"></div>
+    <h3 style="font-size:13px;color:#475569;margin:16px 0 8px;">总汇总</h3>
+    <div class="stats" id="moneyTotal" style="grid-template-columns:repeat(5,1fr);"></div>
+    <h3 style="font-size:13px;color:#475569;margin:16px 0 8px;">投注明细
+      <button class="red small" id="betClear" style="margin-left:8px;">清空全部记录</button>
+    </h3>
+    <div class="record-wrap" style="max-height:400px;">
+      <table class="trend-table"><thead><tr>
+        <th>期号</th><th>日期</th><th>玩法</th><th>号码</th><th>号码数×注数×金额</th><th>赔率</th><th>结果</th><th>盈亏</th><th>操作</th>
+      </tr></thead><tbody id="moneyBody"></tbody></table>
+    </div>
+  </div>
+
+  <div class="card" id="card-stats">
+    <h2>📊 总体命中率 <span class="badge" id="statsRangeLabel">全部</span></h2>
+    <div class="tab-group" id="statsRangeTabs">
+      <button data-range="7">近7期</button><button data-range="15">近15期</button>
+      <button data-range="30">近30期</button><button data-range="90">近90期</button>
+      <button data-range="all" class="active">全部</button>
+    </div>
+    <div class="stats" id="stats"></div>
+    <h3 style="font-size:13px;color:#475569;margin:16px 0 8px;">🎴 生肖各玩法全中率</h3>
+    <div class="stats" id="zodiacRates" style="grid-template-columns:repeat(5,1fr);"></div>
+    <h3 style="font-size:13px;color:#475569;margin:16px 0 8px;">🎯 特码推荐 3 层命中率</h3>
+    <div class="stats" id="specialRates" style="grid-template-columns:repeat(3,1fr);"></div>
+    <h3 style="font-size:13px;color:#475569;margin:16px 0 8px;">⭐ 3中3 两组命中率</h3>
+    <div class="stats" id="threeRates" style="grid-template-columns:repeat(2,1fr);"></div>
+  </div>
+
+  <div class="card" id="card-abc">
+    <h2>🎯 ABC 策略长期测试 <span class="badge green">100 期导向</span></h2>
+    <p class="hint" style="margin-top:0;">
+      对每一期都用 A / B / C 三种策略分别计算推荐，看哪种策略在长期（100 期以上）表现最稳。<br>
+      <b>A</b> = 高频加权（追热号）&nbsp;·&nbsp;<b>B</b> = 逆推冷号（追冷号回补）&nbsp;·&nbsp;<b>C</b> = 冷热混合
+    </p>
+    <div class="row" style="margin-bottom:10px;">
+      <label style="font-size:13px;">回测范围：</label>
+      <select id="abcRange" style="width:150px;">
+        <option value="50">近 50 期</option>
+        <option value="100" selected>近 100 期</option>
+        <option value="200">近 200 期</option>
+        <option value="all">全部历史</option>
+      </select>
+      <button class="green" id="abcRunBtn">🚀 运行回测</button>
+      <span id="abcProgress" class="hint" style="margin:0;"></span>
+    </div>
+    <div id="abcResult" style="display:none;">
+      <div class="stats c5" id="abcWinnerBox"></div>
+      <div style="overflow-x:auto;">
+        <table><thead><tr>
+          <th>指标</th><th>A · 高频加权</th><th>B · 逆推冷号</th><th>C · 冷热混合</th><th>最优</th>
+        </tr></thead><tbody id="abcResultBody"></tbody></table>
+      </div>
+      <div style="background:#f0fdf4;border-left:3px solid #10b981;padding:12px 14px;border-radius:6px;font-size:13px;color:#065f46;line-height:1.9;margin-top:12px;" id="abcSummary"></div>
+    </div>
+  </div>
+
+  <div class="card" id="card-dist">
+    <h2>🎴 命中个数分布</h2>
+    <div class="tab-group" id="zodiacRangeTabs">
+      <button data-range="7">近7期</button><button data-range="15">近15期</button>
+      <button data-range="30">近30期</button><button data-range="90">近90期</button>
+      <button data-range="all" class="active">全部</button>
+    </div>
+    <h3 style="font-size:13px;color:#475569;margin:8px 0;">生肖命中个数（推荐4肖）</h3>
+    <div class="mini-stats" id="zodiacDistDetail"></div>
+    <h3 style="font-size:13px;color:#475569;margin:16px 0 8px;">特码5命中分布</h3>
+    <div class="mini-stats" id="special5Dist"></div>
+    <h3 style="font-size:13px;color:#475569;margin:16px 0 8px;">特码8命中分布</h3>
+    <div class="mini-stats" id="special8Dist"></div>
+    <h3 style="font-size:13px;color:#475569;margin:16px 0 8px;">特码10命中分布</h3>
+    <div class="mini-stats" id="special10Dist"></div>
+    <h3 style="font-size:13px;color:#475569;margin:16px 0 8px;">3中3 A组(5个) 在6平码里中几个</h3>
+    <div class="mini-stats" id="threeADist"></div>
+    <h3 style="font-size:13px;color:#475569;margin:16px 0 8px;">3中3 B组(6个) 在6平码里中几个</h3>
+    <div class="mini-stats" id="threeBDist"></div>
+  </div>
+
+  <div class="card" id="card-trend">
+    <h2>📈 特码尾号趋势</h2>
+    <div class="row" style="margin-bottom:10px;">
+      <select id="trendRange" style="width:130px;">
+        <option value="5">近5期</option><option value="10">近10期</option>
+        <option value="20">近20期</option><option value="30" selected>近30期</option>
+        <option value="50">近50期</option><option value="100">近100期</option>
+      </select>
+    </div>
+    <div class="stats" id="trendStats" style="grid-template-columns:repeat(5,1fr);margin-bottom:12px;"></div>
+    <div class="record-wrap" style="max-height:500px;">
+      <table class="trend-table"><thead><tr>
+        <th>期号</th><th>日期</th><th>推荐尾号</th><th>开奖特码</th><th>实际尾号</th><th>差距</th><th>结果</th>
+      </tr></thead><tbody id="trendList"></tbody></table>
+    </div>
+  </div>
+
+  <div class="card" id="card-streak">
+    <h2>🔥 连中 / 连错</h2>
+    <div class="tab-group" id="streakRangeTabs">
+      <button data-range="7">近7期</button><button data-range="15">近15期</button>
+      <button data-range="30">近30期</button><button data-range="90">近90期</button>
+      <button data-range="all" class="active">全部</button>
+    </div>
+    <div class="stats" id="streakRates" style="grid-template-columns:repeat(5,1fr);"></div>
+    <h3 style="font-size:13px;color:#475569;margin:18px 0 8px;">尾号连中 / 连错</h3>
+    <div class="stats" id="streakBox" style="grid-template-columns:repeat(5,1fr);"></div>
+    <div id="streakGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(50px,1fr));gap:4px;margin-top:8px;"></div>
+  </div>
+
+  <div class="card" id="card-period">
+    <h2>📅 周期统计</h2>
+    <div class="tab-group"><button id="tabWeek" class="active">按周</button><button id="tabMonth">按月</button></div>
+    <div class="tab-group">
+      <button id="periodLatest" class="active">最新在前</button>
+      <button id="periodOldest">最早在前</button>
+    </div>
+    <div style="overflow-x:auto;">
+      <table id="periodTable"><thead><tr>
+        <th>周期</th><th>期数</th><th>尾号</th>
+        <th>1肖全中</th><th>2肖全中</th><th>3肖全中</th><th>4肖全中</th>
+        <th>特码5</th><th>特码8</th><th>特码10</th>
+        <th>3中3A</th><th>3中3B</th>
+      </tr></thead><tbody id="periodBody"></tbody></table>
+    </div>
+  </div>
+
+  <div class="card" id="card-backtest">
+    <h2>📊 单期策略对比（近100期）</h2>
+    <div style="overflow-x:auto;">
+      <table><thead><tr><th>指标</th><th>A · 高频</th><th>B · 逆推冷号</th><th>C · 冷热混合</th><th>最强</th></tr></thead>
+      <tbody id="backtestCompareBody"></tbody></table>
+    </div>
+    <div style="background:#fffbeb;border-left:3px solid #f59e0b;padding:10px 12px;border-radius:4px;font-size:12px;color:#78350f;line-height:1.9;margin-top:10px" id="backtestAnalysis"></div>
+  </div>
+
+  <div class="card" id="card-cold">
+    <h2>❄️ 冷号分析</h2>
+    <h3 style="font-size:13px;color:#475569;margin:8px 0;">特码尾号冷号</h3><div id="coldTails"></div>
+    <h3 style="font-size:13px;color:#475569;margin:16px 0 8px;">特码生肖冷号</h3><div id="coldZodiacs"></div>
+    <h3 style="font-size:13px;color:#475569;margin:16px 0 8px;">特码号码冷号 TOP15</h3><div id="coldNumbers"></div>
+  </div>
+
+  <div class="card" id="card-rank">
+    <h2>🏆 历史频率排行</h2>
+    <h3 style="font-size:13px;color:#475569;margin:8px 0;">尾号</h3><div id="tailRank"></div>
+    <h3 style="font-size:13px;color:#475569;margin:16px 0 8px;">生肖</h3><div id="zodiacRank"></div>
+    <h3 style="font-size:13px;color:#475569;margin:16px 0 8px;">号码 TOP10</h3><div id="numRank"></div>
+  </div>
+
+  <div class="card">
+    <h2>💾 数据管理</h2>
+    <div class="row">
+      <button id="expBtn" class="gray">导出</button>
+      <button id="impBtn" class="gray">导入</button>
+      <input type="file" id="impFile" accept=".json" style="display:none">
+      <button id="wipeBtn" class="red">清空</button>
+      <button id="recalcBtn" class="orange">♻️ 重算所有推荐</button>
+    </div>
+    <p class="hint" style="margin-top:8px;">♻️ <b>重算</b>：用当前算法重跑历史推荐（算法更新后旧推荐会变）。</p>
+  </div>
+
+  <div class="card" id="card-diary">
+    <h2>📓 更新日记 <span class="badge">算法/功能变更记录</span>
+      <button class="green small" id="addDiaryBtn" style="margin-left:auto;">➕ 添加记录</button>
+    </h2>
+    <div id="diaryList"></div>
+  </div>
+</div>
+
+<div id="tab-dlt" class="tab-panel">
+  <div class="card"><h2>🎯 超级大乐透</h2>
+    <div class="row" style="margin-bottom:8px;">
+      <input type="text" id="dltIssue" placeholder="期号" style="width:110px;">
+      <input type="date" id="dltDate" style="width:150px;">
+    </div>
+    <div class="row" style="margin-bottom:8px;">
+      <span>前区：</span>
+      <input type="number" class="dltN1" min="1" max="35" style="width:55px;">
+      <input type="number" class="dltN1" min="1" max="35" style="width:55px;">
+      <input type="number" class="dltN1" min="1" max="35" style="width:55px;">
+      <input type="number" class="dltN1" min="1" max="35" style="width:55px;">
+      <input type="number" class="dltN1" min="1" max="35" style="width:55px;">
+      <span style="margin-left:8px;">后区：</span>
+      <input type="number" class="dltN2" min="1" max="12" style="width:55px;">
+      <input type="number" class="dltN2" min="1" max="12" style="width:55px;">
+    </div>
+    <button id="dltSave" class="green">保存</button>
+    <div class="status" id="dltStatus"></div>
+  </div>
+  <div class="card"><h2>📖 记录 <span id="dltCount" class="badge">0</span></h2>
+    <table><thead><tr><th>期号</th><th>日期</th><th>号码</th><th>操作</th></tr></thead><tbody id="dltBody"></tbody></table>
+  </div>
+</div>
+
+<div id="tab-ssq" class="tab-panel">
+  <div class="card"><h2>🎱 双色球</h2>
+    <div class="row" style="margin-bottom:8px;">
+      <input type="text" id="ssqIssue" placeholder="期号" style="width:110px;">
+      <input type="date" id="ssqDate" style="width:150px;">
+    </div>
+    <div class="row" style="margin-bottom:8px;">
+      <span>红球：</span>
+      <input type="number" class="ssqN1" min="1" max="33" style="width:55px;">
+      <input type="number" class="ssqN1" min="1" max="33" style="width:55px;">
+      <input type="number" class="ssqN1" min="1" max="33" style="width:55px;">
+      <input type="number" class="ssqN1" min="1" max="33" style="width:55px;">
+      <input type="number" class="ssqN1" min="1" max="33" style="width:55px;">
+      <input type="number" class="ssqN1" min="1" max="33" style="width:55px;">
+      <span style="margin-left:8px;">蓝球：</span>
+      <input type="number" class="ssqN2" min="1" max="16" style="width:55px;">
+    </div>
+    <button id="ssqSave" class="green">保存</button>
+    <div class="status" id="ssqStatus"></div>
+  </div>
+  <div class="card"><h2>📖 记录 <span id="ssqCount" class="badge">0</span></h2>
+    <table><thead><tr><th>期号</th><th>日期</th><th>号码</th><th>操作</th></tr></thead><tbody id="ssqBody"></tbody></table>
+  </div>
+</div>
+</div>
+
+<div class="modal" id="editModal"><div class="modal-box">
+<h3>✏️ 编辑第 <span id="editModalIssueLabel"></span> 期</h3>
+<div class="modal-field"><label>期号</label><input id="editIssueModalInput"></div>
+<div class="modal-field"><label>日期</label><input type="date" id="editDateModalInput"></div>
+<div class="modal-field"><label>开奖号码</label><input id="editNumsModalInput"></div>
+<div class="status" id="editStatus"></div>
+<div class="row" style="justify-content:flex-end;margin-top:16px;">
+<button class="gray" id="editCancelBtn">取消</button>
+<button class="green" id="editSaveBtn">✓ 保存</button>
+</div>
+</div></div>
+
+<div class="modal" id="diaryModal"><div class="modal-box">
+<h3>📝 添加日记</h3>
+<div class="modal-field"><label>日期</label><input type="date" id="diaryDate"></div>
+<div class="modal-field"><label>版本号</label><input id="diaryVer" placeholder="v46"></div>
+<div class="modal-field"><label>修改内容</label><textarea id="diaryChange" style="width:100%;min-height:80px;padding:8px;border:1px solid #cbd5e1;border-radius:6px;font-family:inherit;font-size:14px;"></textarea></div>
+<div class="row" style="justify-content:flex-end;margin-top:16px;">
+<button class="gray" onclick="document.getElementById('diaryModal').classList.remove('show')">取消</button>
+<button class="green" id="diarySaveBtn">✓ 保存</button>
+</div>
+</div></div>
+
+<div class="side-quick-nav" id="sideQuickNav">
+  <div class="sqn-toggle" id="sqnToggle">📋</div>
+  <div class="sqn-list" id="sqnList">
+    <div class="sqn-title">快速跳转</div>
+    <a data-target="card-rec">🎯 本期推荐</a>
+    <a data-target="card-record">📖 开奖记录</a>
+    <a data-target="card-manual">📸 录入一期</a>
+    <a data-target="card-money">💰 购彩账本</a>
+    <a data-target="card-stats">📊 总体命中率</a>
+    <a data-target="card-abc">🎯 ABC长期测试</a>
+    <a data-target="card-dist">🎴 命中分布</a>
+    <a data-target="card-trend">📈 尾号趋势</a>
+    <a data-target="card-streak">🔥 连中连错</a>
+    <a data-target="card-period">📅 周期统计</a>
+    <a data-target="card-cold">❄️ 冷号分析</a>
+    <a data-target="card-rank">🏆 频率排行</a>
+    <a data-target="card-diary">📓 更新日记</a>
+    <a data-target="top" class="sqn-top">⬆️ 回到顶部</a>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+var REC_KEY='lottery_rec_v46';
+var CFG_KEY='lottery_cfg_v46';
+var MONEY_KEY='lottery_money_v46';
+var DIARY_KEY='lottery_diary_v46';
+var DLT_KEY='dlt_rec_v46';
+var SSQ_KEY='ssq_rec_v46';
+var PRESET_FLAG='lottery_v46_loaded';
+var ZODIAC=['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪'];
+
+var DEFAULT_ODDS={'1':7.5,'2':3.5,'3':2.2,'4':1.6,'tail':4.75,
+  'threeA':50,'threeB':40,'special5':8.5,'special8':5.5,'special10':4.2};
+var PLAY_NAMES={'1':'1肖全中','2':'2肖全中','3':'3肖全中','4':'4肖全中',
+  'tail':'特码尾号','threeA':'3中3 A组','threeB':'3中3 B组',
+  'special5':'特码5个','special8':'特码8个','special10':'特码10个','custom':'自定义'};
+
+var PRESET=[
+'001 27 08 43 33 42 11 29','002 48 07 04 03 15 11 22','003 30 44 07 15 42 17 09',
+'004 22 19 07 35 49 36 45','005 46 19 20 36 13 17 43','006 35 41 15 06 46 21 13',
+'007 28 40 45 34 44 15 41','008 05 39 36 19 29 45 21','009 17 18 06 49 07 22 28',
+'010 23 38 24 49 11 30 27','011 32 10 07 05 48 15 11','012 25 26 33 20 41 45 11',
+'013 09 19 44 27 37 06 01','014 38 13 12 08 43 31 26','015 10 08 30 20 15 33 31',
+'016 34 12 48 26 40 38 06','017 44 18 31 41 33 02 32','018 40 42 43 31 25 15 39',
+'019 42 22 45 19 07 25 46','020 09 37 14 47 11 24 12','021 47 45 33 07 24 10 42',
+'022 39 08 20 37 46 30 18','023 06 29 36 38 18 31 47','024 10 45 25 15 23 44 28',
+'025 46 10 41 06 09 14 37','026 44 34 24 13 37 42 19','027 11 16 46 10 18 49 45',
+'028 17 47 28 39 32 49 03','029 47 08 05 04 03 18 01','030 03 06 47 01 35 04 41',
+'031 38 25 07 19 11 05 26','032 23 17 11 20 10 39 06','033 14 22 46 33 08 11 41',
+'034 38 45 35 24 30 23 19','035 32 47 44 36 19 41 27','036 44 39 11 20 27 48 01',
+'037 34 42 39 13 44 45 43','038 06 40 49 34 12 20 42','039 31 20 08 29 10 04 11',
+'040 46 06 29 27 11 49 28','041 02 08 17 44 32 27 36','042 38 22 17 19 01 18 16',
+'043 09 35 42 40 33 03 13','044 46 17 39 47 48 38 19','045 20 38 22 13 42 27 01',
+'046 13 09 20 22 39 36 03','047 40 35 23 42 46 47 39','048 08 38 29 32 46 16 24',
+'049 28 42 22 49 12 31 13','050 10 13 30 37 33 44 23','051 40 42 44 06 14 38 01',
+'052 15 46 14 13 40 35 38','053 16 12 33 17 41 18 15','054 37 30 11 19 49 32 48',
+'055 31 28 20 21 39 09 14','056 45 09 06 07 10 26 48','057 21 29 40 30 26 34 23',
+'058 20 38 13 21 33 40 31','059 29 19 24 43 28 12 10','060 05 27 40 34 39 01 09',
+'061 46 17 08 25 02 37 29','062 46 29 06 49 35 42 24','063 36 26 37 02 44 31 28',
+'064 08 23 40 44 34 02 18','065 02 45 17 38 33 24 05','066 24 20 36 44 02 28 37',
+'067 15 30 06 01 26 09 05','068 49 02 01 26 38 21 23','069 23 16 10 34 08 36 24',
+'070 47 17 23 10 41 07 25','071 44 30 25 05 41 08 48','072 12 28 01 42 25 44 46',
+'073 07 29 01 33 36 14 34','074 12 31 49 25 24 32 10','075 19 22 26 20 41 27 33',
+'076 12 07 24 22 03 41 02','077 37 32 46 25 39 30 29','078 18 17 10 33 02 08 46',
+'079 49 34 06 20 04 43 35','080 21 18 17 48 09 42 03','081 04 36 14 15 35 41 17',
+'082 03 21 33 37 41 25 27','083 46 08 23 36 30 01 05','084 07 24 02 05 20 31 16',
+'085 14 13 27 33 06 20 19','086 15 36 14 24 26 34 12','087 17 01 21 29 47 02 26',
+'088 16 46 18 10 12 42 27','089 26 44 34 05 21 22 49','090 48 29 20 17 37 08 36',
+'091 08 17 32 05 42 24 37','092 46 42 25 47 38 19 06','093 13 18 26 47 48 04 40',
+'094 16 25 04 28 43 38 17','095 15 39 01 38 21 48 35','096 35 37 26 05 25 15 43',
+'097 28 08 44 26 29 46 11','098 24 08 03 14 32 49 17','099 10 32 22 18 28 17 12',
+'100 24 45 04 32 03 48 33','101 22 08 02 34 20 12 39','102 47 03 32 46 39 36 20',
+'103 34 03 01 30 39 04 06','104 20 45 39 49 03 48 01','105 32 44 17 19 11 36 28',
+'106 31 48 05 11 46 40 22','107 35 10 41 43 34 06 49','108 06 30 26 14 48 40 45',
+'109 38 07 19 24 43 08 16','110 40 03 43 29 45 19 30','111 24 23 21 41 38 33 01',
+'112 15 19 30 07 44 10 09','113 42 22 15 17 32 49 02','114 45 41 10 01 36 25 30',
+'115 21 16 25 29 08 07 04','116 15 46 16 10 48 33 22','117 45 02 46 33 19 07 16',
+'118 38 37 22 46 49 40 08','119 38 18 32 22 30 40 11','120 18 24 07 23 48 20 06',
+'121 45 21 35 48 06 20 44','122 18 23 15 22 25 45 01','123 39 23 49 17 42 44 46',
+'124 46 05 10 17 12 22 39','125 16 19 07 30 38 39 31','126 15 09 05 03 01 10 49',
+'127 14 08 27 03 07 29 45','128 25 46 02 07 45 42 37','129 34 07 40 21 17 25 41',
+'130 41 26 09 11 05 25 29','131 12 40 21 32 01 25 07','132 48 11 20 44 39 35 30',
+'133 38 14 23 01 26 44 07','134 24 46 40 44 22 49 37','135 08 35 09 20 18 47 30',
+'136 01 14 24 17 15 12 48','137 24 20 32 05 19 07 26','138 38 22 06 24 20 46 49',
+'139 41 45 48 01 36 30 24','140 13 10 42 04 46 34 16','141 43 08 17 02 34 32 33',
+'142 45 15 26 21 18 35 23','143 13 26 18 32 02 33 44','144 47 31 29 33 22 26 43',
+'145 36 43 25 32 37 18 05','146 11 30 20 19 05 16 42','147 29 40 06 18 31 10 13',
+'148 28 24 31 23 04 27 48','149 28 30 44 45 04 20 27','150 11 04 22 25 44 19 09',
+'151 27 15 29 42 20 41 31','152 34 47 16 36 44 01 45','153 01 38 33 28 06 40 41',
+'154 46 28 42 31 23 34 41','155 21 37 46 13 40 47 07','156 31 16 11 03 37 12 01',
+'157 43 25 11 31 17 10 40','158 43 48 03 01 12 23 16','159 12 04 28 17 20 46 39',
+'160 08 16 26 01 29 30 02','161 36 40 42 19 34 46 08','162 23 41 24 26 33 07 32',
+'163 39 08 10 33 07 41 37','164 46 04 38 12 03 02 21','165 11 47 09 49 02 01 03',
+'166 20 15 01 04 21 28 06','167 23 03 40 39 07 11 19','168 27 11 24 05 40 33 15',
+'169 44 37 30 08 40 22 24','170 27 46 06 38 20 34 03','171 24 38 40 31 42 46 28',
+'172 28 34 42 37 45 08 44','173 39 06 16 40 13 19 26','174 15 08 34 13 28 21 41',
+'175 07 19 30 29 28 25 26','176 30 31 02 36 38 15 10','177 19 21 05 01 02 44 14',
+'178 26 46 22 44 31 17 18','179 10 11 26 06 31 09 15','180 14 10 37 30 49 19 21',
+'181 17 29 06 34 47 15 19','182 15 23 09 45 24 39 41','183 23 09 46 37 42 03 24',
+'184 44 24 11 36 25 20 01','185 18 35 09 41 12 30 36','186 17 29 22 01 05 38 23',
+'187 23 12 36 38 27 22 01','188 38 05 19 10 14 01 16','189 45 12 37 20 38 43 15',
+'190 46 14 19 37 48 29 16','191 19 43 39 24 16 26 29','192 27 30 45 08 01 37 25',
+'193 02 49 25 11 45 29 09','194 30 21 22 15 04 34 26','195 46 23 39 04 09 19 25',
+'196 03 37 24 10 41 19 39','197 40 19 30 48 44 28 08','198 48 35 45 21 12 24 07',
+'199 17 49 42 45 05 38 36','201 46 28 19 38 31 25 32','202 21 15 25 47 13 45 40',
+'203 12 11 31 03 44 37 25','204 11 12 17 26 10 07 05','205 30 17 39 12 11 28 03',
+'206 09 49 37 03 40 35 47','207 09 40 26 23 44 13 31','208 07 48 40 35 23 28 19',
+'209 44 05 39 14 21 22 08','210 40 37 15 17 42 48 49','211 13 12 39 37 38 08 01',
+'212 43 32 16 39 19 27 06','213 09 05 12 22 01 15 35','214 29 30 27 38 43 31 04',
+'215 19 38 30 13 01 11 14','216 18 41 32 44 36 45 37','217 34 12 11 30 42 07 26',
+'218 02 13 47 38 46 23 17','219 31 41 07 08 29 22 43','220 27 39 04 12 38 25 48',
+'221 24 14 18 48 46 28 01','222 49 14 47 27 18 38 26','223 21 43 01 38 29 44 23',
+'224 25 19 08 49 18 36 09','225 07 34 27 10 19 38 01','226 01 11 29 38 04 33 17',
+'227 23 24 29 07 13 31 16','228 38 26 08 06 29 18 23','229 11 07 15 13 33 16 38',
+'230 28 26 47 14 49 10 16','231 39 46 23 11 08 13 20','232 29 10 17 04 46 20 42',
+'233 18 41 05 49 04 34 07','234 25 30 37 19 07 17 39','235 27 26 35 17 44 21 32',
+'236 26 35 42 09 14 17 11','237 47 36 14 06 41 25 12','238 35 44 23 04 07 21 17',
+'239 47 43 34 17 22 07 05','240 02 34 22 26 28 37 27','241 29 45 27 21 42 41 49',
+'242 29 35 46 32 13 31 09','243 42 17 12 46 09 24 21','244 09 14 03 17 33 40 46',
+'245 22 23 14 02 13 38 18','246 22 24 19 10 20 01 30','247 03 09 43 29 46 04 40',
+'248 43 26 49 39 14 27 20','249 41 22 13 36 26 29 23','250 10 06 39 47 37 17 14',
+'251 09 06 11 25 08 45 30','252 33 41 43 13 06 48 22','253 05 35 15 28 13 49 16',
+'254 26 44 35 06 16 10 02','255 36 22 06 47 39 11 44','256 40 15 09 37 07 03 01',
+'257 08 46 47 39 27 45 07','258 03 23 21 35 05 19 46','259 43 33 49 36 19 30 22',
+'260 25 26 44 32 06 48 20','261 06 25 43 46 29 47 24','262 38 22 33 47 36 07 30',
+'263 44 28 03 02 24 13 09','264 10 06 08 31 22 24 21','265 05 46 40 23 26 44 49',
+'266 38 42 37 29 45 18 08','267 16 20 25 22 09 41 40','268 48 34 11 21 19 36 40',
+'269 19 40 36 05 38 16 22','270 39 34 20 24 17 06 19','271 25 02 05 22 20 31 35',
+'272 43 15 04 06 32 36 02'
+];
+
+var storageMode='memory';
+try{localStorage.setItem('_t','1');localStorage.removeItem('_t');storageMode='local';}catch(e){}
+
+var currentEditIssue=null;
+var currentPeriodTab='week';
+var currentPeriodOrder='latest';
+var currentStatsRange='all';
+var currentZodiacRange='all';
+var currentStreakRange='all';
+var currentTrendRange=30;
+var betPlan=[];
+var cachedRec=null;
+var abcRunning=false;
+
+function stGet(k){try{if(storageMode==='local')return localStorage.getItem(k);}catch(e){}return null;}
+function stSet(k,v){try{if(storageMode==='local')localStorage.setItem(k,v);}catch(e){}}
+function stDel(k){try{if(storageMode==='local')localStorage.removeItem(k);}catch(e){}}
+function $(id){return document.getElementById(id);}
+function showStatus(id,type,msg){var el=$(id);if(!el)return;el.className='status '+(type||'');el.textContent=msg||'';}
+function pad3(n){return String(n).padStart(3,'0');}
+function pad2(n){return String(n).padStart(2,'0');}
+function fmtDate(d){return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate());}
+function issueToDate(issue){
+  var n=parseInt(issue,10);if(isNaN(n))return '';
+  var d=new Date('2026-01-01T00:00:00');
+  d.setDate(d.getDate()+(n-1));
+  return fmtDate(d);
+}
+function getZodiac(num,year,dateStr){
+  var CNY={2024:'2024-02-10',2025:'2025-01-29',2026:'2026-02-17',2027:'2027-02-06'};
+  var ly=year;
+  if(dateStr&&CNY[year]&&dateStr<CNY[year])ly=year-1;
+  var yOff=((ly-2024)%12+12)%12;
+  var yIdx=(4+yOff)%12;
+  var nIdx=(num-1)%12;
+  return ZODIAC[(yIdx-nIdx+12)%12];
+}
+function loadRec(){try{return JSON.parse(stGet(REC_KEY))||[];}catch(e){return [];}}
+function saveRec(r){stSet(REC_KEY,JSON.stringify(r));}
+function sortRecords(r){return r.slice().sort(function(a,b){return (parseInt(a.issue,10)||0)-(parseInt(b.issue,10)||0);});}
+function loadCfg(){try{return JSON.parse(stGet(CFG_KEY))||{};}catch(e){return {};}}
+function saveCfg(c){var e={};try{e=JSON.parse(stGet(CFG_KEY))||{};}catch(x){}for(var k in c)if(c.hasOwnProperty(k))e[k]=c[k];stSet(CFG_KEY,JSON.stringify(e));}
+function loadMoney(){try{return JSON.parse(stGet(MONEY_KEY))||[];}catch(e){return [];}}
+function saveMoney(r){stSet(MONEY_KEY,JSON.stringify(r));}
+function loadDiary(){try{return JSON.parse(stGet(DIARY_KEY))||[];}catch(e){return [];}}
+function saveDiary(r){stSet(DIARY_KEY,JSON.stringify(r));}
+
+function combination(n,k){
+  if(k>n||k<0)return 0;
+  if(k===0||k===n)return 1;
+  k=Math.min(k,n-k);
+  var r=1;
+  for(var i=0;i<k;i++)r=r*(n-i)/(i+1);
+  return Math.round(r);
+}
+function tailCount(t){t=parseInt(t,10);return t===0?4:5;}
+function tailsTotalCount(tails){
+  var n=0;tails.forEach(function(t){n+=tailCount(t);});return n;
+}
+function defaultNumCount(item){
+  if(item.play==='tail')return tailsTotalCount(item.nums);
+  if(item.play==='threeA'||item.play==='threeB')return combination(item.nums.length,3);
+  return item.nums.length;
+}
+
+/* 三种推荐策略 */
+function scoreTails(closed,st){
+  var s=[0,0,0,0,0,0,0,0,0,0];
+  var last=[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1];
+  closed.forEach(function(r,idx){
+    var t=r.special%10;
+    if(st==='A'){if(idx>=closed.length-30)s[t]+=(idx>=closed.length-10?3:1);}
+    else if(st==='B')s[t]-=1;
+    else{if(idx>=closed.length-30)s[t]+=(idx>=closed.length-10?2:1);}
+  });
+  for(var i=closed.length-1;i>=0;i--){var t2=closed[i].special%10;if(last[t2]===-1)last[t2]=closed.length-1-i;}
+  for(var j=0;j<10;j++){if(last[j]===-1)last[j]=closed.length;
+    if(st==='A')s[j]+=last[j]*0.1;else if(st==='B')s[j]+=last[j]*1.5;else s[j]+=last[j]*0.6;}
+  return s;
+}
+function scoreZodiacs(closed,st){
+  var s={},c={},last={};
+  ZODIAC.forEach(function(z){s[z]=0;c[z]=0;last[z]=-1;});
+  closed.forEach(function(r,idx){
+    var y=parseInt((r.date||'').slice(0,4),10)||2026;
+    var seen={};var zs=[];
+    (r.numbers||[]).forEach(function(n){var z=getZodiac(n,y,r.date);if(!seen[z]){seen[z]=true;zs.push(z);}});
+    zs.forEach(function(z){
+      c[z]++;
+      if(st==='A'){if(idx>=closed.length-30)s[z]+=(idx>=closed.length-10?3:1);}
+      else if(st==='B')s[z]-=1;
+      else{if(idx>=closed.length-30)s[z]+=(idx>=closed.length-10?2:1);}
+    });
+  });
+  for(var i=closed.length-1;i>=0;i--){
+    var y2=parseInt((closed[i].date||'').slice(0,4),10)||2026;
+    var seen2={};
+    (closed[i].numbers||[]).forEach(function(n){
+      var z=getZodiac(n,y2,closed[i].date);
+      if(!seen2[z]){seen2[z]=true;if(last[z]===-1)last[z]=closed.length-1-i;}
+    });
+  }
+  ZODIAC.forEach(function(z){if(last[z]===-1)last[z]=closed.length;
+    if(st==='A')s[z]+=last[z]*0.1;else if(st==='B')s[z]+=last[z]*1.5;else s[z]+=last[z]*0.6;});
+  return {score:s,cnt:c};
+}
+function topNums(scores,count){
+  var arr=[];
+  for(var n=1;n<=49;n++)arr.push({n:n,s:scores[n]||0});
+  arr.sort(function(a,b){if(b.s!==a.s)return b.s-a.s;return a.n-b.n;});
+  return arr.slice(0,count).map(function(x){return x.n;}).sort(function(a,b){return a-b;});
+}
+function scoreSpecials(closed){
+  var score={};
+  for(var n=1;n<=49;n++)score[n]=0;
+  var recent30=closed.slice(-30),recent90=closed.slice(-90);
+  var freq30={},freq90={},freqAll={},lastSeen={};
+  for(var i=1;i<=49;i++){freq30[i]=0;freq90[i]=0;freqAll[i]=0;lastSeen[i]=-1;}
+  recent30.forEach(function(r){freq30[r.special]++;});
+  recent90.forEach(function(r){freq90[r.special]++;});
+  closed.forEach(function(r){freqAll[r.special]++;});
+  for(var i2=closed.length-1;i2>=0;i2--){var d=closed.length-1-i2;if(lastSeen[closed[i2].special]===-1)lastSeen[closed[i2].special]=d;}
+  for(var n2=1;n2<=49;n2++){
+    if(lastSeen[n2]===-1)lastSeen[n2]=closed.length;
+    score[n2]=freq30[n2]*1.8 + freq90[n2]*0.8 + freqAll[n2]*0.3;
+    if(freq30[n2]===0)score[n2]+=2;
+    if(freq90[n2]<=2)score[n2]+=1;
+    score[n2]+=Math.min(lastSeen[n2],60)*0.15;
+  }
+  return score;
+}
+function recommendSpecials(closed){
+  var scores=scoreSpecials(closed);
+  return {s5:topNums(scores,5),s8:topNums(scores,8),s10:topNums(scores,10)};
+}
+function buildThreeTwoGroups(closed){
+  var nums=[];for(var i=1;i<=49;i++)nums.push(i);
+  var fs={},fl={};
+  for(var i2=1;i2<=49;i2++){fs[i2]=0;fl[i2]=-1;}
+  closed.forEach(function(r,idx){(r.numbers||[]).slice(0,6).forEach(function(n){fs[n]=(fs[n]||0)+((idx>=closed.length-10)?3:1);});});
+  for(var i3=closed.length-1;i3>=0;i3--){var d=closed.length-1-i3;(closed[i3].numbers||[]).slice(0,6).forEach(function(n){if(fl[n]===-1)fl[n]=d;});}
+  for(var i4=1;i4<=49;i4++)if(fl[i4]===-1)fl[i4]=closed.length;
+  var sF=nums.slice().sort(function(a,b){var sa=fs[a]||0,sb=fs[b]||0;if(sb!==sa)return sb-sa;return a-b;});
+  var sL=nums.slice().sort(function(a,b){var la=fl[a],lb=fl[b];if(lb!==la)return lb-la;return a-b;});
+  var gA=[sF[0],sF[1]];var usedA={};gA.forEach(function(n){usedA[n]=true;});
+  for(var q=0;q<sL.length&&gA.length<4;q++)if(!usedA[sL[q]]){gA.push(sL[q]);usedA[sL[q]]=true;}
+  var mid=Math.floor(sF.length*0.4);
+  for(var q2=mid;q2<sF.length&&gA.length<5;q2++)if(!usedA[sF[q2]]){gA.push(sF[q2]);usedA[sF[q2]]=true;}
+  while(gA.length<5)gA.push(nums[gA.length]);
+  gA.sort(function(a,b){return a-b;});
+  var gB=[];var usedB={};
+  for(var q3=0;q3<sF.length&&gB.length<3;q3++)if(!usedB[sF[q3]]){gB.push(sF[q3]);usedB[sF[q3]]=true;}
+  for(var q4=0;q4<sL.length&&gB.length<6;q4++)if(!usedB[sL[q4]]){gB.push(sL[q4]);usedB[sL[q4]]=true;}
+  while(gB.length<6)gB.push(nums[gB.length]);
+  gB.sort(function(a,b){return a-b;});
+  return {a:gA,b:gB};
+}
+function recommendFromList(closed,strategy){
+  strategy=strategy||'C';
+  var fb=[1,2,3,4,5,6,7,8,9,10];
+  var fbz=['鼠','牛','虎','兔'];
+  if(closed.length<3){
+    return {tails:[0,3,6],zodiacs:fbz,
+      threeA:fb.slice(0,5),threeB:fb.slice(0,6),
+      special5:fb.slice(0,5),special8:fb.slice(0,8),special10:fb.slice(0,10)};
+  }
+  var ts=scoreTails(closed,strategy);
+  var tails=[0,1,2,3,4,5,6,7,8,9].sort(function(a,b){if(ts[b]!==ts[a])return ts[b]-ts[a];return a-b;}).slice(0,3).sort(function(a,b){return a-b;});
+  var zs=scoreZodiacs(closed,strategy);
+  var zodiacs=ZODIAC.slice().sort(function(a,b){if(zs.score[b]!==zs.score[a])return zs.score[b]-zs.score[a];return zs.cnt[b]-zs.cnt[a];});
+  var sp=recommendSpecials(closed);
+  var tg=buildThreeTwoGroups(closed);
+  return {tails:tails,zodiacs:zodiacs,
+    threeA:tg.a,threeB:tg.b,
+    special5:sp.s5,special8:sp.s8,special10:sp.s10};
+}
+
+/* 扰动：让补锁的每期推荐不完全一样 */
+function perturbRec(rec,offset){
+  if(offset<=0)return rec;
+  function rotate(arr,n){
+    if(!arr||arr.length<=1)return arr.slice();
+    var head=arr[0];
+    var rest=arr.slice(1);
+    var k=n%rest.length;
+    return [head].concat(rest.slice(k)).concat(rest.slice(0,k));
+  }
+  function rotSortNums(arr,n,count){
+    var r=rotate(arr,n);
+    return r.slice(0,count).sort(function(a,b){return a-b;});
+  }
+  function rotZod(arr,n,count){
+    var r=rotate(arr,n);
+    return r.slice(0,count);
+  }
+  return {
+    tails: rotSortNums(rec.tails,offset,3),
+    zodiacs: rotZod(rec.zodiacs,offset,4),
+    threeA: rotSortNums(rec.threeA,offset,5),
+    threeB: rotSortNums(rec.threeB,offset,6),
+    special5: rotSortNums(rec.special5,offset,5),
+    special8: rotSortNums(rec.special8,offset,8),
+    special10: rotSortNums(rec.special10,offset,10)
+  };
+}
+
+function computeHits(record){
+  if(!record.special||!record.numbers||record.numbers.length<7)return null;
+  var y=parseInt((record.date||'').slice(0,4),10)||2026;
+  var nums=record.numbers;
+  var flat=nums.slice(0,6);
+  var recZ=(record.recZodiacs||[]).slice(0,4);
+  var allZ=[];
+  nums.forEach(function(n){var z=getZodiac(n,y,record.date);if(allZ.indexOf(z)===-1)allZ.push(z);});
+  var nHits=[0,0,0,0,0];
+  for(var n=1;n<=4;n++){var top=recZ.slice(0,n);nHits[n]=top.filter(function(z){return allZ.indexOf(z)!==-1;}).length;}
+  var fullHit=[false,false,false,false,false];
+  for(var n2=1;n2<=4;n2++){var top2=recZ.slice(0,n2);if(top2.length===n2)fullHit[n2]=top2.every(function(z){return allZ.indexOf(z)!==-1;});}
+  var tailHit=(record.recTails||[]).indexOf(record.special%10)!==-1;
+  function countFlatHits(arr){var c=0;(arr||[]).forEach(function(n){if(flat.indexOf(n)!==-1)c++;});return c;}
+  var threeAHit=countFlatHits(record.recThreeA);
+  var threeBHit=countFlatHits(record.recThreeB);
+  var special5Hit=(record.recSpecial5||[]).indexOf(record.special)!==-1;
+  var special8Hit=(record.recSpecial8||[]).indexOf(record.special)!==-1;
+  var special10Hit=(record.recSpecial10||[]).indexOf(record.special)!==-1;
+  return {allZ:allZ,nHits:nHits,fullHit:fullHit,tailHit:tailHit,flat:flat,
+    threeAHit:threeAHit,threeBHit:threeBHit,
+    threeAIs3:threeAHit>=3,threeBIs3:threeBHit>=3,
+    special5Hit:special5Hit,special8Hit:special8Hit,special10Hit:special10Hit};
+}
+function checkBetHit(rec,bet){
+  if(!rec||rec.special==null)return false;
+  var y=parseInt((rec.date||'').slice(0,4),10)||2026;
+  var nums=rec.numbers;var flat=nums.slice(0,6);
+  var allZ=[];
+  nums.forEach(function(n){var z=getZodiac(n,y,rec.date);if(allZ.indexOf(z)===-1)allZ.push(z);});
+  var betNums=bet.nums||[];
+  if(bet.play==='1')return betNums.length>=1 && allZ.indexOf(betNums[0])!==-1;
+  if(bet.play==='2')return betNums.length>=2 && betNums.slice(0,2).every(function(z){return allZ.indexOf(z)!==-1;});
+  if(bet.play==='3')return betNums.length>=3 && betNums.slice(0,3).every(function(z){return allZ.indexOf(z)!==-1;});
+  if(bet.play==='4')return betNums.length>=4 && betNums.slice(0,4).every(function(z){return allZ.indexOf(z)!==-1;});
+  if(bet.play==='tail')return betNums.indexOf(rec.special%10)!==-1 || betNums.indexOf(String(rec.special%10))!==-1;
+  if(bet.play==='threeA'||bet.play==='threeB'){var nn=betNums.map(Number);var c=0;nn.forEach(function(n){if(flat.indexOf(n)!==-1)c++;});return c>=3;}
+  if(bet.play==='special5'||bet.play==='special8'||bet.play==='special10'){
+    return betNums.indexOf(rec.special)!==-1 || betNums.indexOf(String(rec.special))!==-1;
+  }
+  return false;
+}
+function importPreset(){
+  var records=[];
+  PRESET.forEach(function(line){
+    var p=line.split(' ');if(p.length<8)return;
+    var issue=p[0];var nums=p.slice(1).map(function(x){return parseInt(x,10);});
+    records.push({issue:issue,date:issueToDate(issue),numbers:nums,special:nums[6],
+      recTails:[],recZodiacs:[],recThreeA:[],recThreeB:[],recSpecial5:[],recSpecial8:[],recSpecial10:[]});
+  });
+  var sorted=sortRecords(records);
+  for(var i=1;i<sorted.length;i++){
+    var past=sorted.slice(0,i).filter(function(x){return x.special!=null;});
+    var rec=recommendFromList(past);
+    sorted[i].recTails=rec.tails;
+    sorted[i].recZodiacs=rec.zodiacs.slice(0,4);
+    sorted[i].recThreeA=rec.threeA;
+    sorted[i].recThreeB=rec.threeB;
+    sorted[i].recSpecial5=rec.special5;
+    sorted[i].recSpecial8=rec.special8;
+    sorted[i].recSpecial10=rec.special10;
+  }
+  saveRec(sorted);
+  return sorted.length;
+}
+
+function renderRec(){
+  var records=sortRecords(loadRec());
+  var closed=records.filter(function(r){return r.special!=null;});
+  var rec=recommendFromList(closed);
+  cachedRec=rec;
+  var zi=rec.zodiacs;
+  $('recZi1').textContent=zi.slice(0,1).join('')||'-';
+  $('recZi2').textContent=zi.slice(0,2).join('')||'-';
+  $('recZi3').textContent=zi.slice(0,3).join('')||'-';
+  $('recZi4').textContent=zi.slice(0,4).join('')||'-';
+  $('recTailChips').innerHTML=rec.tails.map(function(t){return '<div class="tail-chip">'+t+'</div>';}).join('');
+  $('recSp5').innerHTML=rec.special5.map(function(n){return '<span class="num-pill s5">'+String(n).padStart(2,'0')+'</span>';}).join('');
+  $('recSp8').innerHTML=rec.special8.map(function(n){return '<span class="num-pill s8">'+String(n).padStart(2,'0')+'</span>';}).join('');
+  $('recSp10').innerHTML=rec.special10.map(function(n){return '<span class="num-pill s10">'+String(n).padStart(2,'0')+'</span>';}).join('');
+  $('recT3A').innerHTML=rec.threeA.map(function(n){return '<span class="num-pill t3a">'+String(n).padStart(2,'0')+'</span>';}).join('');
+  $('recT3B').innerHTML=rec.threeB.map(function(n){return '<span class="num-pill t3b">'+String(n).padStart(2,'0')+'</span>';}).join('');
+  $('recTitle').textContent='基于 '+closed.length+' 期历史数据';
+  var maxI=0;records.forEach(function(r){var n=parseInt(r.issue,10);if(n>maxI)maxI=n;});
+  if($('recLockIssue') && !$('recLockIssue').value){
+    $('recLockIssue').value=pad3(maxI+1);
+    if(!$('recLockDate').value)$('recLockDate').value=fmtDate(new Date());
+  }
+  var pend=records.filter(function(r){return r.special==null;});
+  $('pendingCount').textContent='待开奖 '+pend.length;
+  if($('betIssue') && !$('betIssue').value){
+    $('betIssue').value=pad3(maxI+1);
+    if(!$('betDate').value)$('betDate').value=fmtDate(new Date());
+  }
+}
+
+function lockCurrentRec(){
+  if(!cachedRec){alert('推荐未加载');return;}
+  var issue=$('recLockIssue').value.trim();
+  var date=$('recLockDate').value;
+  if(!issue){showStatus('lockStatus','err','填期号');return;}
+  if(!date){showStatus('lockStatus','err','选日期');return;}
+  var records=loadRec();
+  if(records.some(function(r){return r.issue===issue;})){showStatus('lockStatus','err','期号已存在');return;}
+  var rec=cachedRec;
+  records.push({issue:issue,date:date,numbers:[],special:null,
+    recTails:rec.tails,recZodiacs:rec.zodiacs.slice(0,4),
+    recThreeA:rec.threeA,recThreeB:rec.threeB,
+    recSpecial5:rec.special5,recSpecial8:rec.special8,recSpecial10:rec.special10,
+    locked:true,lockedAt:Date.now()});
+  saveRec(sortRecords(records));
+  showStatus('lockStatus','ok','✓ 已锁定第 '+issue+' 期');
+  var n=parseInt(issue,10);
+  if(!isNaN(n))$('recLockIssue').value=pad3(n+1);
+  renderAll();
+  checkGapsAndShow();
+}
+
+function renderRecord(){
+  var records=sortRecords(loadRec());
+  var filter=($('filterIssue').value||'').trim();
+  var range=$('recordRange').value;
+  var all=records.slice().reverse();
+  if(range!=='all'){var n=parseInt(range,10);if(!isNaN(n))all=all.slice(0,n);}
+  if(filter)all=all.filter(function(r){return String(r.issue).indexOf(filter)!==-1;});
+  $('allCount').textContent=records.length;
+  function renderNumsHl(nums, flat){
+    return nums.map(function(n){
+      var s=String(n).padStart(2,'0');
+      if(flat.indexOf(parseInt(n,10))!==-1)return '<span class="hl-num">'+s+'</span>';
+      return '<span class="no-num">'+s+'</span>';
+    }).join(' ');
+  }
+  function renderSpecialHl(nums, special){
+    return nums.map(function(n){
+      var s=String(n).padStart(2,'0');
+      if(n===special)return '<span class="hl-num">'+s+'</span>';
+      return '<span class="no-num">'+s+'</span>';
+    }).join(' ');
+  }
+  $('allBody').innerHTML=all.length===0?'<tr><td colspan="13" class="empty">暂无</td></tr>':all.map(function(r){
+    var closed=r.special!=null;
+    var h=closed?computeHits(r):null;
+    var y=parseInt((r.date||'').slice(0,4),10)||2026;
+    var numsTxt='-';
+    if((r.numbers||[]).length){
+      numsTxt='<span class="nums-balls">';
+      r.numbers.slice(0,6).forEach(function(n){
+        var z=getZodiac(n,y,r.date);
+        numsTxt+='<span class="num-zodiac-pair"><span class="num-ball">'+String(n).padStart(2,'0')+'</span><span class="zodiac-label">'+z+'</span></span>';
+      });
+      var sz=getZodiac(r.special,y,r.date);
+      numsTxt+='<span class="num-zodiac-pair special-pair"><span class="num-ball special">'+String(r.special).padStart(2,'0')+'</span><span class="zodiac-label">'+sz+'</span></span>';
+      numsTxt+='</span>';
+    } else {
+      numsTxt='<span class="badge warn">待开奖</span>';
+    }
+    var recZ=(r.recZodiacs||[]).slice(0,4);
+    var zHtml='';
+    recZ.forEach(function(z,i){
+      var cls='miss';
+      if(h){var isHit=h.allZ.indexOf(z)!==-1;cls=isHit?(i===0?'core-hit':'hit'):(i===0?'core':'miss');}
+      else cls=(i===0?'core':'miss');
+      zHtml+='<span class="zc '+cls+'">'+z+'</span>';
+    });
+    var zHitTxt=h?(h.nHits[4]+'/4'):'-';
+    var tailHitTxt=h?(h.tailHit?'<span class="hit">✓</span>':'<span class="miss">✗</span>'):'-';
+    var flatArr=h?h.flat:[];
+    var tAHtml=(r.recThreeA||[]).length?renderNumsHl(r.recThreeA,flatArr):'-';
+    var tBHtml=(r.recThreeB||[]).length?renderNumsHl(r.recThreeB,flatArr):'-';
+    var tAHitTxt=h?('<span style="color:#065f46;font-weight:bold;">'+h.threeAHit+'/5</span>'+(h.threeAIs3?' <span class="hit">✓</span>':'')):'-';
+    var tBHitTxt=h?('<span style="color:#0891b2;font-weight:bold;">'+h.threeBHit+'/6</span>'+(h.threeBIs3?' <span class="hit">✓</span>':'')):'-';
+    var sp5Html=(r.recSpecial5||[]).length?renderSpecialHl(r.recSpecial5,r.special):'-';
+    var sp8Html=(r.recSpecial8||[]).length?renderSpecialHl(r.recSpecial8,r.special):'-';
+    var sp10Html=(r.recSpecial10||[]).length?renderSpecialHl(r.recSpecial10,r.special):'-';
+    var sp5Txt=h?(h.special5Hit?'<span class="hit">✓</span>':'<span class="miss">✗</span>'):'-';
+    var sp8Txt=h?(h.special8Hit?'<span class="hit">✓</span>':'<span class="miss">✗</span>'):'-';
+    var sp10Txt=h?(h.special10Hit?'<span class="hit">✓</span>':'<span class="miss">✗</span>'):'-';
+    var issueCls=r.special==null?'pending':'';
+    return '<tr><td><span class="issue-tag '+issueCls+'">'+r.issue+'</span></td><td class="date-cell">'+(r.date||'-')+'</td><td>'+numsTxt+'</td>'+
+      '<td style="font-size:11px;font-weight:bold;">'+((r.recTails||[]).join(' ')||'-')+'</td><td>'+tailHitTxt+'</td>'+
+      '<td><div class="zodiac-record">'+zHtml+'</div></td><td>'+zHitTxt+'</td>'+
+      '<td style="font-size:10px;">'+tAHtml+'<br>'+tAHitTxt+'</td>'+
+      '<td style="font-size:10px;">'+tBHtml+'<br>'+tBHitTxt+'</td>'+
+      '<td style="font-size:10px;">'+sp5Html+'<br>'+sp5Txt+'</td>'+
+      '<td style="font-size:10px;">'+sp8Html+'<br>'+sp8Txt+'</td>'+
+      '<td style="font-size:10px;">'+sp10Html+'<br>'+sp10Txt+'</td>'+
+      '<td><button class="gray small" data-edit="'+r.issue+'">编辑</button></td></tr>';
+  }).join('');
+}
+
+function filterByRange(records,range){
+  if(range==='all')return records;
+  var n=parseInt(range,10);if(isNaN(n))return records;
+  return records.slice(-n);
+}
+
+function renderStats(){
+  var records=sortRecords(loadRec());
+  var closedAll=records.filter(function(r){return r.special!=null;});
+  var closed=filterByRange(closedAll,currentStatsRange);
+  var total=closed.length;
+  var tailH=0,tailT=0,zT=0;
+  var fullHitCnt=[0,0,0,0,0];
+  var sumHits=0;
+  var sp5T=0,sp5H=0,sp8T=0,sp8H=0,sp10T=0,sp10H=0;
+  var tAT=0,tAH=0,tBT=0,tBH=0;
+  closed.forEach(function(r){
+    var h=computeHits(r);if(!h)return;
+    if((r.recTails||[]).length){tailT++;if(h.tailHit)tailH++;}
+    if((r.recZodiacs||[]).length){zT++;for(var n=1;n<=4;n++)if(h.fullHit[n])fullHitCnt[n]++;sumHits+=h.nHits[4];}
+    if((r.recSpecial5||[]).length){sp5T++;if(h.special5Hit)sp5H++;}
+    if((r.recSpecial8||[]).length){sp8T++;if(h.special8Hit)sp8H++;}
+    if((r.recSpecial10||[]).length){sp10T++;if(h.special10Hit)sp10H++;}
+    if((r.recThreeA||[]).length>=3){tAT++;if(h.threeAIs3)tAH++;}
+    if((r.recThreeB||[]).length>=3){tBT++;if(h.threeBIs3)tBH++;}
+  });
+  function pct(n,d){return d?((n/d)*100).toFixed(1)+'%':'-';}
+  var avg=zT?sumHits/zT:0;
+  $('statsRangeLabel').textContent=currentStatsRange==='all'?'全部':'近 '+currentStatsRange+' 期';
+  $('stats').innerHTML=
+    '<div class="sbox"><div class="v">'+total+'</div><div class="l">已开奖期数</div></div>'+
+    '<div class="sbox"><div class="v">'+pct(tailH,tailT)+'</div><div class="l">尾号命中率<br>('+tailH+'/'+tailT+')</div></div>'+
+    '<div class="sbox hl"><div class="v">'+avg.toFixed(2)+'</div><div class="l">平均每期命中肖数</div></div>'+
+    '<div class="sbox hl2"><div class="v">'+pct(sp5H,sp5T)+'</div><div class="l">特码5个命中率</div></div>'+
+    '<div class="sbox hl2"><div class="v">'+pct(sp8H,sp8T)+'</div><div class="l">特码8个命中率</div></div>'+
+    '<div class="sbox hl2"><div class="v">'+pct(sp10H,sp10T)+'</div><div class="l">特码10个命中率</div></div>'+
+    '<div class="sbox hl3"><div class="v">'+pct(tAH,tAT)+'</div><div class="l">3中3 A组</div></div>'+
+    '<div class="sbox hl3"><div class="v">'+pct(tBH,tBT)+'</div><div class="l">3中3 B组</div></div>';
+  var r1=zT?(fullHitCnt[1]/zT*100):0,r2=zT?(fullHitCnt[2]/zT*100):0,r3=zT?(fullHitCnt[3]/zT*100):0,r4=zT?(fullHitCnt[4]/zT*100):0;
+  $('zodiacRates').innerHTML=
+    '<div class="sbox hl"><div class="v">'+r1.toFixed(1)+'%</div><div class="l">1肖全中率<br>('+fullHitCnt[1]+'/'+zT+')</div></div>'+
+    '<div class="sbox"><div class="v">'+r2.toFixed(1)+'%</div><div class="l">2肖全中率<br>('+fullHitCnt[2]+'/'+zT+')</div></div>'+
+    '<div class="sbox"><div class="v">'+r3.toFixed(1)+'%</div><div class="l">3肖全中率<br>('+fullHitCnt[3]+'/'+zT+')</div></div>'+
+    '<div class="sbox"><div class="v">'+r4.toFixed(1)+'%</div><div class="l">4肖全中率<br>('+fullHitCnt[4]+'/'+zT+')</div></div>'+
+    '<div class="sbox"><div class="v">'+avg.toFixed(2)+'</div><div class="l">平均命中肖数</div></div>';
+  $('specialRates').innerHTML=
+    '<div class="sbox hl2"><div class="v">'+pct(sp5H,sp5T)+'</div><div class="l">特码5个(A层)<br>'+sp5H+'/'+sp5T+'</div></div>'+
+    '<div class="sbox hl2"><div class="v">'+pct(sp8H,sp8T)+'</div><div class="l">特码8个(B层)<br>'+sp8H+'/'+sp8T+'</div></div>'+
+    '<div class="sbox hl2"><div class="v">'+pct(sp10H,sp10T)+'</div><div class="l">特码10个(C层)<br>'+sp10H+'/'+sp10T+'</div></div>';
+  $('threeRates').innerHTML=
+    '<div class="sbox hl3"><div class="v">'+pct(tAH,tAT)+'</div><div class="l">3中3 A组(5个)<br>≥3个命中 ('+tAH+'/'+tAT+')</div></div>'+
+    '<div class="sbox hl3"><div class="v">'+pct(tBH,tBT)+'</div><div class="l">3中3 B组(6个)<br>≥3个命中 ('+tBH+'/'+tBT+')</div></div>';
+  renderDist(closedAll);
+  renderTrend(closedAll);
+  renderStreak(closedAll);
+  renderPeriod(closedAll);
+  renderBacktest(records);
+  renderCold(closedAll);
+  renderRank(closedAll);
+  renderMoney();
+}
+
+function renderDist(closedAll){
+  var closed=filterByRange(closedAll,currentZodiacRange);
+  var zT=0,zDist=[0,0,0,0,0];
+  var s5T=0,s5Dist=[0,0],s8T=0,s8Dist=[0,0],s10T=0,s10Dist=[0,0];
+  var aT=0,aDist=[0,0,0,0,0,0];
+  var bT=0,bDist=[0,0,0,0,0,0,0];
+  closed.forEach(function(r){
+    var h=computeHits(r);if(!h)return;
+    if((r.recZodiacs||[]).length){zT++;zDist[Math.min(h.nHits[4],4)]++;}
+    if((r.recSpecial5||[]).length){s5T++;s5Dist[h.special5Hit?1:0]++;}
+    if((r.recSpecial8||[]).length){s8T++;s8Dist[h.special8Hit?1:0]++;}
+    if((r.recSpecial10||[]).length){s10T++;s10Dist[h.special10Hit?1:0]++;}
+    if((r.recThreeA||[]).length>=3){aT++;aDist[Math.min(h.threeAHit,5)]++;}
+    if((r.recThreeB||[]).length>=3){bT++;bDist[Math.min(h.threeBHit,6)]++;}
+  });
+  function pct(n,d){return d?((n/d)*100).toFixed(1)+'%':'-';}
+  $('zodiacDistDetail').innerHTML=zDist.map(function(c,i){
+    var lb=(i===0)?'未中':('中'+i+'个肖');
+    return '<div class="ms"'+(i>=3?' style="background:#fef3c7;"':'')+'><div class="v">'+c+'期</div><div class="l">'+lb+'<br>('+pct(c,zT)+')</div></div>';
+  }).join('');
+  $('special5Dist').innerHTML=s5Dist.map(function(c,i){
+    var lb=(i===0)?'未中':'命中';
+    return '<div class="ms"'+(i===1?' style="background:#fee2e2;"':'')+'><div class="v">'+c+'期</div><div class="l">'+lb+'<br>('+pct(c,s5T)+')</div></div>';
+  }).join('');
+  $('special8Dist').innerHTML=s8Dist.map(function(c,i){
+    var lb=(i===0)?'未中':'命中';
+    return '<div class="ms"'+(i===1?' style="background:#fef3c7;"':'')+'><div class="v">'+c+'期</div><div class="l">'+lb+'<br>('+pct(c,s8T)+')</div></div>';
+  }).join('');
+  $('special10Dist').innerHTML=s10Dist.map(function(c,i){
+    var lb=(i===0)?'未中':'命中';
+    return '<div class="ms"'+(i===1?' style="background:#e0e7ff;"':'')+'><div class="v">'+c+'期</div><div class="l">'+lb+'<br>('+pct(c,s10T)+')</div></div>';
+  }).join('');
+  $('threeADist').innerHTML=aDist.map(function(c,i){
+    var lb=(i===0)?'未中':(i===5?'中5个':'中'+i+'个');
+    return '<div class="ms"'+(i>=3?' style="background:#fef3c7;"':'')+'><div class="v">'+c+'期</div><div class="l">'+lb+'<br>('+pct(c,aT)+')</div></div>';
+  }).join('');
+  $('threeBDist').innerHTML=bDist.map(function(c,i){
+    var lb=(i===0)?'未中':(i===6?'中6个':'中'+i+'个');
+    return '<div class="ms"'+(i>=3?' style="background:#d1fae5;"':'')+'><div class="v">'+c+'期</div><div class="l">'+lb+'<br>('+pct(c,bT)+')</div></div>';
+  }).join('');
+}
+
+function renderTrend(closedAll){
+  var n=currentTrendRange;var recent=closedAll.slice(-n);
+  var hits=0,zT=0;
+  recent.forEach(function(r){var h=computeHits(r);if(!h)return;if((r.recTails||[]).length){zT++;if(h.tailHit)hits++;}});
+  $('trendStats').innerHTML=
+    '<div class="sbox"><div class="v">'+recent.length+'</div><div class="l">显示期数</div></div>'+
+    '<div class="sbox hl"><div class="v">'+(zT?(hits/zT*100).toFixed(1)+'%':'-')+'</div><div class="l">命中率('+hits+'/'+zT+')</div></div>'+
+    '<div class="sbox"><div class="v">'+hits+'</div><div class="l">命中</div></div>'+
+    '<div class="sbox"><div class="v">'+(zT-hits)+'</div><div class="l">未中</div></div>'+
+    '<div class="sbox"><div class="v">'+(zT?((zT-hits)/zT*100).toFixed(1)+'%':'-')+'</div><div class="l">未中率</div></div>';
+  var el=$('trendList');
+  if(!recent.length){el.innerHTML='<tr><td colspan="7" class="empty">暂无</td></tr>';return;}
+  el.innerHTML=recent.slice().reverse().map(function(r){
+    var h=computeHits(r);var isHit=h&&h.tailHit;
+    var tails=(r.recTails||[]);var minD=9;
+    tails.forEach(function(t){var d=Math.abs(r.special%10-t);if(d<minD)minD=d;});
+    return '<tr class="trend-row '+(isHit?'hit':'miss')+'">'+
+      '<td><span class="issue-tag">'+r.issue+'</span></td><td class="date-cell">'+r.date+'</td>'+
+      '<td style="font-weight:bold;">'+tails.join(' ')+'</td>'+
+      '<td><span style="display:inline-block;min-width:30px;padding:3px 8px;border-radius:6px;background:#f59e0b;color:#fff;font-weight:bold;">'+String(r.special).padStart(2,'0')+'</span></td>'+
+      '<td style="font-weight:bold;">'+(r.special%10)+'</td><td>'+minD+'</td>'+
+      '<td>'+(isHit?'<span class="hit">✓ 命中</span>':'<span class="miss">✗ 未中</span>')+'</td></tr>';
+  }).join('');
+}
+
+function renderStreak(closedAll){
+  var closed=filterByRange(closedAll,currentStreakRange);
+  var zT=0,fullCnt=[0,0,0,0,0];
+  var tailH=0,tailT=0;
+  closed.forEach(function(r){
+    var h=computeHits(r);if(!h)return;
+    if((r.recZodiacs||[]).length){zT++;for(var n=1;n<=4;n++)if(h.fullHit[n])fullCnt[n]++;}
+    if((r.recTails||[]).length){tailT++;if(h.tailHit)tailH++;}
+  });
+  function pct(n,d){return d?((n/d)*100).toFixed(1)+'%':'-';}
+  $('streakRates').innerHTML=
+    '<div class="sbox hl"><div class="v">'+pct(tailH,tailT)+'</div><div class="l">尾号<br>('+tailH+'/'+tailT+')</div></div>'+
+    '<div class="sbox hl"><div class="v">'+pct(fullCnt[1],zT)+'</div><div class="l">1肖全中<br>('+fullCnt[1]+'/'+zT+')</div></div>'+
+    '<div class="sbox hl"><div class="v">'+pct(fullCnt[2],zT)+'</div><div class="l">2肖全中<br>('+fullCnt[2]+'/'+zT+')</div></div>'+
+    '<div class="sbox hl"><div class="v">'+pct(fullCnt[3],zT)+'</div><div class="l">3肖全中<br>('+fullCnt[3]+'/'+zT+')</div></div>'+
+    '<div class="sbox hl"><div class="v">'+pct(fullCnt[4],zT)+'</div><div class="l">4肖全中<br>('+fullCnt[4]+'/'+zT+')</div></div>';
+  var flags=[];
+  closed.forEach(function(r){if((r.recTails||[]).length===0)return;var h=computeHits(r);if(!h)return;flags.push({issue:r.issue,win:h.tailHit});});
+  var maxW=0,maxL=0,tw=0,tl=0;
+  flags.forEach(function(f){if(f.win){tw++;tl=0;if(tw>maxW)maxW=tw;}else{tl++;tw=0;if(tl>maxL)maxL=tl;}});
+  var cur=1,ct=flags.length?flags[flags.length-1].win:false;
+  for(var i=flags.length-2;i>=0;i--){if(flags[i].win===ct)cur++;else break;}
+  var totalWin=flags.filter(function(f){return f.win;}).length;
+  $('streakBox').innerHTML=
+    '<div class="sbox"><div class="v" style="color:'+(ct?'#16a34a':'#dc2626')+';">'+(flags.length?cur:0)+'</div><div class="l">当前'+(ct?'连中':'连错')+'</div></div>'+
+    '<div class="sbox plus"><div class="v">'+maxW+'</div><div class="l">最长连中</div></div>'+
+    '<div class="sbox minus"><div class="v">'+maxL+'</div><div class="l">最长连错</div></div>'+
+    '<div class="sbox"><div class="v">'+totalWin+'</div><div class="l">总命中</div></div>'+
+    '<div class="sbox"><div class="v">'+(flags.length-totalWin)+'</div><div class="l">总未中</div></div>';
+  var recent=flags.slice(-Math.min(30,flags.length)).reverse();
+  $('streakGrid').innerHTML=recent.map(function(f){
+    return '<div style="padding:6px 4px;border-radius:6px;text-align:center;font-size:11px;font-weight:bold;'+(f.win?'background:#10b981;color:#fff':'background:#ef4444;color:#fff')+'">'+f.issue+'<span style="font-size:9px;opacity:.8;display:block">'+(f.win?'中':'未')+'</span></div>';
+  }).join('');
+}
+
+function getWeekKey(dateStr){
+  var d=new Date(dateStr+'T00:00:00');if(isNaN(d.getTime()))return '未知';
+  var t=new Date(d.valueOf());
+  var dn=(d.getDay()+6)%7;t.setDate(t.getDate()-dn+3);
+  var ft=new Date(t.getFullYear(),0,4);
+  var wk=1+Math.round((t-ft)/(7*86400000));
+  return t.getFullYear()+' 第'+pad2(wk)+'周';
+}
+function renderPeriod(closedAll){
+  var groups={};
+  closedAll.forEach(function(r){
+    var key=currentPeriodTab==='week'?getWeekKey(r.date):(r.date||'').slice(0,7);
+    if(!groups[key])groups[key]={key:key,total:0,tailH:0,tailT:0,zT:0,fullH:[0,0,0,0,0],
+      sp5H:0,sp5T:0,sp8H:0,sp8T:0,sp10H:0,sp10T:0,tAH:0,tAT:0,tBH:0,tBT:0};
+    var h=computeHits(r);if(!h)return;
+    groups[key].total++;
+    if((r.recTails||[]).length){groups[key].tailT++;if(h.tailHit)groups[key].tailH++;}
+    if((r.recZodiacs||[]).length){groups[key].zT++;for(var n=1;n<=4;n++)if(h.fullHit[n])groups[key].fullH[n]++;}
+    if((r.recSpecial5||[]).length){groups[key].sp5T++;if(h.special5Hit)groups[key].sp5H++;}
+    if((r.recSpecial8||[]).length){groups[key].sp8T++;if(h.special8Hit)groups[key].sp8H++;}
+    if((r.recSpecial10||[]).length){groups[key].sp10T++;if(h.special10Hit)groups[key].sp10H++;}
+    if((r.recThreeA||[]).length>=3){groups[key].tAT++;if(h.threeAIs3)groups[key].tAH++;}
+    if((r.recThreeB||[]).length>=3){groups[key].tBT++;if(h.threeBIs3)groups[key].tBH++;}
+  });
+  var arr=Object.keys(groups).map(function(k){return groups[k];});
+  if(currentPeriodOrder==='latest')arr.sort(function(a,b){return a.key<b.key?1:-1;});
+  else arr.sort(function(a,b){return a.key<b.key?-1:1;});
+  function pct(n,d){return d?((n/d)*100).toFixed(1)+'%':'-';}
+  $('periodBody').innerHTML=arr.length===0?'<tr><td colspan="12" class="empty">暂无</td></tr>':arr.map(function(g){
+    return '<tr><td><b>'+g.key+'</b></td><td>'+g.total+'</td><td>'+pct(g.tailH,g.tailT)+'</td>'+
+      '<td>'+pct(g.fullH[1],g.zT)+'</td><td>'+pct(g.fullH[2],g.zT)+'</td>'+
+      '<td>'+pct(g.fullH[3],g.zT)+'</td><td>'+pct(g.fullH[4],g.zT)+'</td>'+
+      '<td>'+pct(g.sp5H,g.sp5T)+'</td><td>'+pct(g.sp8H,g.sp8T)+'</td><td>'+pct(g.sp10H,g.sp10T)+'</td>'+
+      '<td>'+pct(g.tAH,g.tAT)+'</td><td>'+pct(g.tBH,g.tBT)+'</td></tr>';
+  }).join('');
+}
+
+function renderBacktest(records){
+  var closed=sortRecords(records.filter(function(r){return r.special!=null;}));
+  if(closed.length<5){$('backtestCompareBody').innerHTML='<tr><td colspan="5" class="empty">数据不足</td></tr>';return;}
+  var strategies=['A','B','C'];
+  var res={};
+  strategies.forEach(function(st){res[st]={tail:{h:0,t:0},f1:{h:0,t:0},f2:{h:0,t:0},f3:{h:0,t:0},f4:{h:0,t:0},sp5:{h:0,t:0},sp8:{h:0,t:0},sp10:{h:0,t:0}};});
+  for(var i=3;i<closed.length;i++){
+    var past=closed.slice(0,i);var cur=closed[i];
+    var y=parseInt((cur.date||'').slice(0,4),10)||2026;
+    var allZ=[];
+    (cur.numbers||[]).forEach(function(n){var z=getZodiac(n,y,cur.date);if(allZ.indexOf(z)===-1)allZ.push(z);});
+    strategies.forEach(function(st){
+      var rec=recommendFromList(past,st);
+      res[st].tail.t++;if(rec.tails.indexOf(cur.special%10)!==-1)res[st].tail.h++;
+      for(var n=1;n<=4;n++){res[st]['f'+n].t++;var top=rec.zodiacs.slice(0,n);if(top.length===n&&top.every(function(z){return allZ.indexOf(z)!==-1;}))res[st]['f'+n].h++;}
+      res[st].sp5.t++;if(rec.special5.indexOf(cur.special)!==-1)res[st].sp5.h++;
+      res[st].sp8.t++;if(rec.special8.indexOf(cur.special)!==-1)res[st].sp8.h++;
+      res[st].sp10.t++;if(rec.special10.indexOf(cur.special)!==-1)res[st].sp10.h++;
+    });
+  }
+  function pct(n,d){return d?((n/d)*100).toFixed(1)+'%':'-';}
+  var rows=[{l:'尾号命中率',k:'tail'},{l:'1肖全中率',k:'f1'},{l:'2肖全中率',k:'f2'},
+    {l:'3肖全中率',k:'f3'},{l:'4肖全中率',k:'f4'},{l:'特码5命中',k:'sp5'},
+    {l:'特码8命中',k:'sp8'},{l:'特码10命中',k:'sp10'}];
+  $('backtestCompareBody').innerHTML=rows.map(function(row){
+    var best='',bestV=-1;
+    var cells=strategies.map(function(st){
+      var d=res[st][row.k];var p=d.t?(d.h/d.t*100):0;
+      if(p>bestV){bestV=p;best=st;}
+      return '<td>'+pct(d.h,d.t)+'<br><span style="font-size:10px;color:#94a3b8;">('+d.h+'/'+d.t+')</span></td>';
+    }).join('');
+    return '<tr><td style="text-align:left;"><b>'+row.l+'</b></td>'+cells+'<td><span class="badge">'+best+'</span></td></tr>';
+  }).join('');
+  var tailWin=strategies.reduce(function(a,b){return res[a].tail.h>res[b].tail.h?a:b;});
+  var z1Win=strategies.reduce(function(a,b){return res[a].f1.h>res[b].f1.h?a:b;});
+  var sp5Win=strategies.reduce(function(a,b){return res[a].sp5.h>res[b].sp5.h?a:b;});
+  $('backtestAnalysis').innerHTML='<b>📊 分析：</b><br>'+
+    '1. <b>尾号</b>：「'+tailWin+'」最强。<br>'+
+    '2. <b>1肖</b>：「'+z1Win+'」最强。<br>'+
+    '3. <b>特码5</b>：「'+sp5Win+'」最强。<br>'+
+    '4. <b>总结</b>：多玩法用 <b>C 冷热混合</b> 综合期望最稳。';
+}
+
+/* ⭐ ABC 长期测试 */
+function runABCLong(){
+  if(abcRunning)return;
+  abcRunning=true;
+  $('abcProgress').textContent='计算中...';
+  $('abcRunBtn').disabled=true;
+
+  setTimeout(function(){
+    var records=sortRecords(loadRec());
+    var closed=records.filter(function(r){return r.special!=null;});
+    var range=$('abcRange').value;
+    if(range!=='all'){
+      var n=parseInt(range,10);
+      if(!isNaN(n))closed=closed.slice(-n);
+    }
+    if(closed.length<5){
+      $('abcProgress').textContent='数据不足（至少5期）';
+      abcRunning=false;$('abcRunBtn').disabled=false;
+      return;
+    }
+
+    var strategies=['A','B','C'];
+    var res={};
+    strategies.forEach(function(st){
+      res[st]={
+        tail:{h:0,t:0},f1:{h:0,t:0},f2:{h:0,t:0},f3:{h:0,t:0},f4:{h:0,t:0},
+        sp5:{h:0,t:0},sp8:{h:0,t:0},sp10:{h:0,t:0},
+        threeA:{h:0,t:0},threeB:{h:0,t:0}
+      };
+    });
+
+    /* 对每一期，用之前所有数据算推荐，评估三种策略 */
+    for(var i=3;i<closed.length;i++){
+      var past=closed.slice(0,i);
+      var cur=closed[i];
+      var y=parseInt((cur.date||'').slice(0,4),10)||2026;
+      var nums=cur.numbers;
+      var flat=nums.slice(0,6);
+      var allZ=[];
+      nums.forEach(function(n){var z=getZodiac(n,y,cur.date);if(allZ.indexOf(z)===-1)allZ.push(z);});
+      var tail=cur.special%10;
+
+      strategies.forEach(function(st){
+        var rec=recommendFromList(past,st);
+        /* 尾号 */
+        res[st].tail.t++;if(rec.tails.indexOf(tail)!==-1)res[st].tail.h++;
+        /* 1-4 肖全中 */
+        for(var n=1;n<=4;n++){
+          res[st]['f'+n].t++;
+          var top=rec.zodiacs.slice(0,n);
+          if(top.length===n && top.every(function(z){return allZ.indexOf(z)!==-1;}))res[st]['f'+n].h++;
+        }
+        /* 特码三层 */
+        res[st].sp5.t++;if(rec.special5.indexOf(cur.special)!==-1)res[st].sp5.h++;
+        res[st].sp8.t++;if(rec.special8.indexOf(cur.special)!==-1)res[st].sp8.h++;
+        res[st].sp10.t++;if(rec.special10.indexOf(cur.special)!==-1)res[st].sp10.h++;
+        /* 3中3 A/B 组，≥3 个命中算中 */
+        var cA=0;rec.threeA.forEach(function(n){if(flat.indexOf(n)!==-1)cA++;});
+        res[st].threeA.t++;if(cA>=3)res[st].threeA.h++;
+        var cB=0;rec.threeB.forEach(function(n){if(flat.indexOf(n)!==-1)cB++;});
+        res[st].threeB.t++;if(cB>=3)res[st].threeB.h++;
+      });
+    }
+
+    /* 综合评分（权重加起来） */
+    var WEIGHT={
+      tail:1.0, f1:0.5, f2:0.8, f3:1.0, f4:1.2,
+      sp5:1.0, sp8:1.2, sp10:1.5, threeA:1.0, threeB:1.2
+    };
+    function calcScore(st){
+      var total=0,weightSum=0;
+      for(var k in WEIGHT){
+        var rate=res[st][k].t>0?(res[st][k].h/res[st][k].t):0;
+        total+=rate*WEIGHT[k];
+        weightSum+=WEIGHT[k];
+      }
+      return weightSum>0?total/weightSum:0;
+    }
+    var scores={};
+    strategies.forEach(function(st){scores[st]=calcScore(st);});
+
+    /* 找出综合最优 */
+    var bestSt='A';
+    strategies.forEach(function(st){if(scores[st]>scores[bestSt])bestSt=st;});
+
+    /* 各指标最优 */
+    function getWinner(key){
+      var best='A',bestV=-1;
+      strategies.forEach(function(st){
+        var rate=res[st][key].t>0?(res[st][key].h/res[st][key].t):0;
+        if(rate>bestV){bestV=rate;best=st;}
+      });
+      return best;
+    }
+
+    function pct(h,t){return t>0?((h/t)*100).toFixed(1)+'%':'-';}
+    var rows=[
+      {l:'尾号命中率',k:'tail'},
+      {l:'1肖全中率',k:'f1'},
+      {l:'2肖全中率',k:'f2'},
+      {l:'3肖全中率',k:'f3'},
+      {l:'4肖全中率',k:'f4'},
+      {l:'特码5命中率',k:'sp5'},
+      {l:'特码8命中率',k:'sp8'},
+      {l:'特码10命中率',k:'sp10'},
+      {l:'3中3A命中率',k:'threeA'},
+      {l:'3中3B命中率',k:'threeB'}
+    ];
+
+    $('abcResultBody').innerHTML=rows.map(function(row){
+      var cells=strategies.map(function(st){
+        var d=res[st][row.k];
+        return '<td>'+pct(d.h,d.t)+'<br><span style="font-size:10px;color:#94a3b8;">('+d.h+'/'+d.t+')</span></td>';
+      }).join('');
+      var winner=getWinner(row.k);
+      return '<tr><td style="text-align:left;"><b>'+row.l+'</b></td>'+cells+'<td><span class="badge">'+winner+'</span></td></tr>';
+    }).join('');
+
+    $('abcWinnerBox').innerHTML=
+      '<div class="sbox '+(bestSt==='A'?'hl':'')+'"><div class="v">'+(scores.A*100).toFixed(1)+'%</div><div class="l">A 高频加权<br>综合评分</div></div>'+
+      '<div class="sbox '+(bestSt==='B'?'hl':'')+'"><div class="v">'+(scores.B*100).toFixed(1)+'%</div><div class="l">B 逆推冷号<br>综合评分</div></div>'+
+      '<div class="sbox '+(bestSt==='C'?'hl':'')+'"><div class="v">'+(scores.C*100).toFixed(1)+'%</div><div class="l">C 冷热混合<br>综合评分</div></div>'+
+      '<div class="sbox hl2"><div class="v">'+bestSt+'</div><div class="l">综合最优策略</div></div>'+
+      '<div class="sbox"><div class="v">'+closed.length+'</div><div class="l">回测期数</div></div>';
+
+    var winCount={A:0,B:0,C:0};
+    rows.forEach(function(row){winCount[getWinner(row.k)]++;});
+
+    var summary='<b>📊 长期测试结果（'+closed.length+' 期）：</b><br>';
+    summary+='🏆 <b>综合评分最优：'+bestSt+' 策略</b>（评分 '+(scores[bestSt]*100).toFixed(1)+'%）<br>';
+    summary+='📈 <b>各策略胜场数</b>：A = '+winCount.A+' 项 / B = '+winCount.B+' 项 / C = '+winCount.C+' 项（共 '+rows.length+' 项指标）<br>';
+    summary+='📌 <b>建议</b>：'+
+      (bestSt==='C'?'C 冷热混合最稳，可作为主策略。':
+       bestSt==='A'?'当前阶段 A 追热号更有效，但样本还需积累。':
+       '当前阶段 B 逆推冷号更有效，但样本还需积累。')+'<br>';
+    summary+='💡 建议每 '+Math.max(30,Math.floor(closed.length/3))+' 期重新跑一次，观察最优策略是否稳定。';
+    $('abcSummary').innerHTML=summary;
+
+    $('abcProgress').textContent='✓ 完成，回测 '+closed.length+' 期';
+    $('abcResult').style.display='block';
+    abcRunning=false;
+    $('abcRunBtn').disabled=false;
+  },50);
+}
+
+function renderCold(closed){
+  function lastGap(recs,picker){
+    var last={};
+    for(var i=recs.length-1;i>=0;i--){var d=recs.length-1-i;picker(recs[i]).forEach(function(k){if(last[k]===undefined)last[k]=d;});}
+    return last;
+  }
+  var tailLast=lastGap(closed,function(r){return [r.special%10];});
+  var zodiacLast=lastGap(closed,function(r){var y=parseInt((r.date||'').slice(0,4),10)||2026;return [getZodiac(r.special,y,r.date)];});
+  var numLast=lastGap(closed,function(r){return [r.special];});
+  function maxGap(arr){var m=0;arr.forEach(function(d){if(d.gap>m)m=d.gap;});return m||1;}
+  function renderList(arr){
+    var m=maxGap(arr);
+    return arr.map(function(d){
+      var w=(d.gap/m)*100;
+      var lb=(d.gap===undefined)?'从未出现':(d.gap===0?'最新一期':'已 '+d.gap+' 期未出');
+      var cls=(d.gap===undefined||d.gap>=5)?'cold':(d.gap<=1?'hot':'');
+      return '<div class="rank-item '+cls+'"><div class="name">'+d.name+'</div><div class="bar-bg"><div class="bar-fill" style="width:'+Math.max(w,8)+'%;">'+(w>30?lb:'')+'</div></div><div class="cnt">'+lb+'</div></div>';
+    }).join('');
+  }
+  var tailArr=[0,1,2,3,4,5,6,7,8,9].map(function(t){return {name:'尾'+t,gap:tailLast[t]};}).sort(function(a,b){return (b.gap===undefined?999:b.gap)-(a.gap===undefined?999:a.gap);});
+  var zodiacArr=ZODIAC.map(function(z){return {name:z,gap:zodiacLast[z]};}).sort(function(a,b){return (b.gap===undefined?999:b.gap)-(a.gap===undefined?999:a.gap);});
+  var numArr=[];
+  for(var n=1;n<=49;n++)if(numLast[n]!==undefined)numArr.push({name:String(n).padStart(2,'0'),gap:numLast[n]});
+  numArr.sort(function(a,b){return b.gap-a.gap;});
+  $('coldTails').innerHTML=renderList(tailArr);
+  $('coldZodiacs').innerHTML=renderList(zodiacArr);
+  $('coldNumbers').innerHTML=renderList(numArr.slice(0,15));
+}
+
+function renderRank(closed){
+  var tc=[0,0,0,0,0,0,0,0,0,0];
+  closed.forEach(function(r){tc[r.special%10]++;});
+  var tailArr=tc.map(function(c,i){return {name:'尾'+i,cnt:c};}).sort(function(a,b){return b.cnt-a.cnt;});
+  var zc={};ZODIAC.forEach(function(z){zc[z]=0;});
+  closed.forEach(function(r){var y=parseInt((r.date||'').slice(0,4),10)||2026;zc[getZodiac(r.special,y,r.date)]++;});
+  var zArr=ZODIAC.map(function(z){return {name:z,cnt:zc[z]};}).sort(function(a,b){return b.cnt-a.cnt;});
+  var nc={};
+  closed.forEach(function(r){nc[r.special]=(nc[r.special]||0)+1;});
+  var nArr=Object.keys(nc).map(function(k){return {name:k,cnt:nc[k]};}).sort(function(a,b){return b.cnt-a.cnt;}).slice(0,10);
+  function renderList(arr){
+    if(!arr.length||arr[0].cnt===0)return '<div class="empty">暂无</div>';
+    var max=arr[0].cnt||1;
+    return arr.map(function(d,i){
+      var w=(d.cnt/max)*100;
+      return '<div class="rank-item'+(i<3&&d.cnt>0?' hot':'')+'"><div class="name">'+d.name+'</div><div class="bar-bg"><div class="bar-fill" style="width:'+Math.max(w,8)+'%;">'+(w>25?d.cnt:'')+'</div></div><div class="cnt">'+d.cnt+'次</div></div>';
+    }).join('');
+  }
+  $('tailRank').innerHTML=renderList(tailArr);
+  $('zodiacRank').innerHTML=renderList(zArr);
+  $('numRank').innerHTML=renderList(nArr);
+}
+
+/* 购彩账本 */
+function lockAllRecommendations(){
+  var records=sortRecords(loadRec());
+  var closed=records.filter(function(r){return r.special!=null;});
+  var rec=recommendFromList(closed);
+  betPlan=[
+    {play:'1',label:'1肖全中',nums:[rec.zodiacs[0]].filter(Boolean),odds:DEFAULT_ODDS['1'],amount:5,betsPerNum:1,numCount:1,enabled:true},
+    {play:'2',label:'2肖全中',nums:rec.zodiacs.slice(0,2),odds:DEFAULT_ODDS['2'],amount:5,betsPerNum:1,numCount:2,enabled:false},
+    {play:'3',label:'3肖全中',nums:rec.zodiacs.slice(0,3),odds:DEFAULT_ODDS['3'],amount:5,betsPerNum:1,numCount:3,enabled:false},
+    {play:'4',label:'4肖全中',nums:rec.zodiacs.slice(0,4),odds:DEFAULT_ODDS['4'],amount:5,betsPerNum:1,numCount:4,enabled:false},
+    {play:'tail',label:'特码尾号',nums:rec.tails.map(String),odds:DEFAULT_ODDS['tail'],amount:5,betsPerNum:1,numCount:0,enabled:true},
+    {play:'threeA',label:'3中3 A组',nums:rec.threeA.map(String),odds:DEFAULT_ODDS['threeA'],amount:5,betsPerNum:1,numCount:0,enabled:false},
+    {play:'threeB',label:'3中3 B组',nums:rec.threeB.map(String),odds:DEFAULT_ODDS['threeB'],amount:5,betsPerNum:1,numCount:0,enabled:false},
+    {play:'special5',label:'特码5个',nums:rec.special5.map(String),odds:DEFAULT_ODDS['special5'],amount:5,betsPerNum:1,numCount:5,enabled:false},
+    {play:'special8',label:'特码8个',nums:rec.special8.map(String),odds:DEFAULT_ODDS['special8'],amount:5,betsPerNum:1,numCount:8,enabled:false},
+    {play:'special10',label:'特码10个',nums:rec.special10.map(String),odds:DEFAULT_ODDS['special10'],amount:5,betsPerNum:1,numCount:10,enabled:false}
+  ];
+  betPlan.forEach(function(item){item.numCount=defaultNumCount(item);});
+  $('betPlanWrap').style.display='block';
+  renderBetPlan();
+}
+function renderBetPlan(){
+  $('betPlanBody').innerHTML=betPlan.map(function(item,idx){
+    var subtotal=item.numCount*item.betsPerNum*item.amount;
+    return '<tr data-idx="'+idx+'" class="'+(item.enabled?'':'disabled')+'">'+
+      '<td><input type="checkbox" class="ck" data-bet-ck="'+idx+'" '+(item.enabled?'checked':'')+'></td>'+
+      '<td class="row-label">'+item.label+'</td>'+
+      '<td><input type="text" data-bet-nums="'+idx+'" value="'+item.nums.join(' ')+'"></td>'+
+      '<td><input type="number" data-bet-numcount="'+idx+'" value="'+item.numCount+'" min="1" style="background:#fffbeb;"></td>'+
+      '<td><input type="number" data-bet-bets="'+idx+'" value="'+item.betsPerNum+'" min="1" style="background:#fffbeb;"></td>'+
+      '<td><input type="number" data-bet-amt="'+idx+'" value="'+item.amount+'" min="1"></td>'+
+      '<td><input type="number" data-bet-odds="'+idx+'" value="'+item.odds+'" step="0.01" min="0.1"></td>'+
+      '<td class="subtotal">'+subtotal.toFixed(2)+'</td>'+
+      '<td><button class="red small" data-bet-rm="'+idx+'">×</button></td>'+
+    '</tr>';
+  }).join('');
+  updatePlanSummary();
+}
+function updatePlanSummary(){
+  var enabled=betPlan.filter(function(i){return i.enabled;});
+  var total=enabled.reduce(function(s,i){return s+i.numCount*i.betsPerNum*i.amount;},0);
+  $('betPlanCount').textContent=enabled.length;
+  $('betPlanTotal').textContent=total.toFixed(2);
+}
+function saveBetPlan(){
+  var issue=$('betIssue').value.trim();var date=$('betDate').value;
+  if(!issue){alert('请填期号');return;}
+  var enabled=betPlan.filter(function(i){return i.enabled && i.nums.length>0;});
+  if(!enabled.length){alert('请至少勾选一种玩法');return;}
+  var bets=loadMoney();
+  var now=Date.now();
+  enabled.forEach(function(item){
+    var total=item.numCount*item.betsPerNum*item.amount;
+    var totalCount=item.numCount*item.betsPerNum;
+    bets.push({issue:issue,date:date,play:item.play,nums:item.nums.slice(),
+      numCount:item.numCount,betsPerNum:item.betsPerNum,
+      amount:item.amount,total:total,totalCount:totalCount,
+      odds:item.odds,addedAt:now});
+  });
+  saveMoney(bets);
+  $('betPlanWrap').style.display='none';
+  betPlan=[];
+  renderMoney();
+  showStatus('mStatus','ok','✓ 已加入 '+enabled.length+' 笔投注');
+}
+function renderMoney(){
+  var bets=loadMoney();
+  var records=loadRec();
+  var recMap={};records.forEach(function(r){recMap[r.issue]=r;});
+  var enriched=bets.map(function(b,i){
+    var rec=recMap[b.issue];var hit=false;
+    if(rec&&rec.special!=null)hit=checkBetHit(rec,b);
+    var total=b.total!=null?b.total:(b.amount*(b.count||b.numCount||1));
+    var gain=hit?(total*b.odds-total):(-total);
+    return {bet:b,rec:rec,hit:hit,gain:gain,total:total,idx:i};
+  });
+  var plays=['1','2','3','4','tail','threeA','threeB','special5','special8','special10','custom'];
+  var summary={};
+  plays.forEach(function(p){summary[p]={bet:0,win:0,cnt:0,hitCnt:0};});
+  enriched.forEach(function(e){
+    var p=e.bet.play;if(!summary[p])return;
+    summary[p].bet+=e.total;summary[p].cnt++;
+    if(e.hit){summary[p].win+=e.total*e.bet.odds;summary[p].hitCnt++;}
+  });
+  $('playSummary').innerHTML=plays.map(function(p){
+    var s=summary[p];if(s.cnt===0)return '';
+    var net=s.win-s.bet;var cls=net>=0?'gain':'loss';
+    return '<div class="play-card '+cls+'">'+
+      '<div class="name">'+PLAY_NAMES[p]+'</div>'+
+      '<div class="row1"><span>投入 '+s.bet.toFixed(0)+'</span><span>中奖 '+s.win.toFixed(0)+'</span></div>'+
+      '<div class="row2">'+(net>=0?'+':'')+net.toFixed(2)+' 元</div>'+
+      '<div class="row1" style="margin-top:4px;"><span>命中率 '+(s.cnt?(s.hitCnt/s.cnt*100).toFixed(1)+'%':'-')+'</span><span>'+s.hitCnt+'/'+s.cnt+'</span></div></div>';
+  }).join('');
+  var totalBet=0,totalWin=0,totalHit=0,totalCnt=0;
+  enriched.forEach(function(e){totalBet+=e.total;totalCnt++;if(e.hit){totalWin+=e.total*e.bet.odds;totalHit++;}});
+  var net=totalWin-totalBet;
+  $('moneyTotal').innerHTML=
+    '<div class="money-box"><div class="v">'+totalCnt+'</div><div class="l">投注笔数</div></div>'+
+    '<div class="money-box"><div class="v">'+totalBet.toFixed(0)+'</div><div class="l">总投入</div></div>'+
+    '<div class="money-box"><div class="v">'+totalWin.toFixed(0)+'</div><div class="l">总中奖</div></div>'+
+    '<div class="money-box '+(net>=0?'gain':'loss')+'"><div class="v">'+(net>=0?'+':'')+net.toFixed(2)+'</div><div class="l">净盈亏</div></div>'+
+    '<div class="money-box"><div class="v">'+(totalCnt?(totalHit/totalCnt*100).toFixed(1)+'%':'-')+'</div><div class="l">命中率</div></div>';
+  $('moneyBody').innerHTML=enriched.length===0?'<tr><td colspan="9" class="empty">还没有投注记录</td></tr>':enriched.slice().reverse().map(function(e){
+    var b=e.bet;var nstr=(b.nums||[]).join(' ');
+    var cntstr='';
+    if(b.numCount!=null&&b.betsPerNum!=null){
+      cntstr=b.numCount+'号 × '+b.betsPerNum+'注 × '+b.amount+'元';
+    }else{
+      cntstr=b.amount+'×'+(b.count||1)+'='+e.total.toFixed(0);
+    }
+    return '<tr class="'+(e.hit?'trend-row hit':'trend-row miss')+'">'+
+      '<td><span class="issue-tag">'+b.issue+'</span></td>'+
+      '<td class="date-cell">'+(e.rec?e.rec.date:'-')+'</td>'+
+      '<td>'+PLAY_NAMES[b.play]+'</td>'+
+      '<td style="font-size:11px;">'+nstr+'</td>'+
+      '<td style="font-size:11px;">'+cntstr+'<br>= <b>'+e.total.toFixed(0)+'元</b></td>'+
+      '<td>'+b.odds+'</td>'+
+      '<td>'+(e.rec&&e.rec.special!=null?(e.hit?'<span class="hit">✓中</span>':'<span class="miss">✗未中</span>'):'<span style="color:#94a3b8;">待开奖</span>')+'</td>'+
+      '<td style="font-weight:bold;color:'+(e.gain>=0?'#16a34a':'#dc2626')+';">'+(e.gain>=0?'+':'')+e.gain.toFixed(2)+'</td>'+
+      '<td><button class="red small" data-money-del="'+e.idx+'">删</button></td></tr>';
+  }).join('');
+}
+
+/* 空缺检测（改进版） */
+function checkGaps(){
+  var records=sortRecords(loadRec());
+  if(!records.length)return {gaps:[],maxIssue:0};
+  var maxI=0;records.forEach(function(r){var n=parseInt(r.issue,10);if(n>maxI)maxI=n;});
+  var gaps=[];
+  var start=new Date('2026-01-01T00:00:00');
+  var today=new Date();today.setHours(0,0,0,0);
+  var issueSet={};records.forEach(function(r){issueSet[r.issue]=true;});
+  var lastDate='';
+  records.forEach(function(r){if(r.date>lastDate)lastDate=r.date;});
+  if(!lastDate)return {gaps:[],maxIssue:maxI};
+  var d=new Date(lastDate+'T00:00:00');
+  d.setDate(d.getDate()+1);
+  while(d<today){
+    var iss=pad3(Math.round((d-start)/(86400000))+1);
+    if(!issueSet[iss])gaps.push({issue:iss,date:fmtDate(d)});
+    d.setDate(d.getDate()+1);
+    if(gaps.length>50)break;
+  }
+  return {gaps:gaps,maxIssue:maxI};
+}
+function fixGaps(){
+  var g=checkGaps();
+  if(!g.gaps.length){alert('没有空缺');return;}
+  var msg='将补锁 '+g.gaps.length+' 期空缺。\n\n';
+  if(g.gaps.length>1){
+    msg+='⚠️ 你连续有 '+g.gaps.length+' 期未登录。\n';
+    msg+='由于期间没有新开奖数据，系统会以"该空缺之前的最后一份数据"为基础，\n';
+    msg+='再加"期号扰动"（每期滚动不同位置）让推荐不完全一样。\n\n';
+    msg+='⚠️ 注意：补锁的推荐仅供参考，不代表真实下注建议。\n\n';
+    msg+='继续补锁吗？';
+  }
+  if(!confirm(msg))return;
+  var records=sortRecords(loadRec());
+  var added=0;
+  g.gaps.forEach(function(item,idx){
+    var past=records.filter(function(r){return r.date<item.date && r.special!=null;});
+    var rec=recommendFromList(past);
+    if(idx>0)rec=perturbRec(rec,idx);
+    records.push({issue:item.issue,date:item.date,numbers:[],special:null,
+      recTails:rec.tails,recZodiacs:rec.zodiacs.slice(0,4),
+      recThreeA:rec.threeA,recThreeB:rec.threeB,
+      recSpecial5:rec.special5,recSpecial8:rec.special8,recSpecial10:rec.special10,
+      autoLocked:true,perturbed:idx>0});
+    added++;
+  });
+  saveRec(sortRecords(records));
+  alert('✓ 已补锁 '+added+' 期（第2期起已加扰动）');
+  renderAll();
+  checkGapsAndShow();
+}
+function checkGapsAndShow(){
+  var g=checkGaps();
+  if(g.gaps.length){
+    var txt=g.gaps.slice(0,5).map(function(x){return '第'+x.issue+'期('+x.date+')';}).join('、');
+    if(g.gaps.length>5)txt+=' 等 '+g.gaps.length+' 期';
+    $('gapAlertTxt').textContent=txt;
+    $('gapCount').textContent=g.gaps.length;
+    $('gapAlert').classList.add('show');
+  }else{
+    $('gapAlert').classList.remove('show');
+  }
+}
+
+function renderDiary(){
+  var diary=loadDiary();
+  if(!diary.length){
+    diary=[
+      {date:'2026-09-30',ver:'v46',change:'补锁改进：空缺多期时从第2期起加"期号扰动"，避免所有期推荐完全相同。新增"ABC 策略长期测试"面板，可选回测 50/100/200/全部期，显示 A/B/C 三种策略各指标命中率、综合评分、最优策略。'}
+    ];
+    saveDiary(diary);
+  }
+  diary.sort(function(a,b){return a.date<b.date?1:-1;});
+  $('diaryList').innerHTML=diary.map(function(d){
+    return '<div class="diary-item"><span class="d-ver">'+d.ver+'</span><span class="d-date">'+d.date+'</span>'+d.change+'</div>';
+  }).join('');
+}
+
+/* 编辑 */
+function openEditModal(issue){
+  var records=loadRec();
+  var r=records.filter(function(x){return x.issue===issue;})[0];
+  if(!r){alert('找不到');return;}
+  currentEditIssue=issue;
+  $('editModalIssueLabel').textContent=issue;
+  $('editIssueModalInput').value=r.issue||'';
+  $('editDateModalInput').value=r.date||'';
+  $('editNumsModalInput').value=(r.numbers||[]).join(' ');
+  showStatus('editStatus','','');
+  $('editModal').classList.add('show');
+}
+function closeEditModal(){$('editModal').classList.remove('show');currentEditIssue=null;}
+function saveEditModal(){
+  if(!currentEditIssue){showStatus('editStatus','err','编辑丢失');return;}
+  var ni=$('editIssueModalInput').value.trim();var nd=$('editDateModalInput').value;var nn=$('editNumsModalInput').value.trim();
+  if(!ni){showStatus('editStatus','err','期号不能空');return;}
+  var records=loadRec();
+  var r=records.filter(function(x){return x.issue===currentEditIssue;})[0];
+  if(!r){showStatus('editStatus','err','找不到原记录');return;}
+  if(ni!==currentEditIssue && records.some(function(x){return x.issue===ni&&x!==r;})){showStatus('editStatus','err','期号已存在');return;}
+  r.issue=ni;if(nd)r.date=nd;
+  var arr=(nn.match(/\d+/g)||[]).map(function(n){return parseInt(n,10);}).filter(function(v){return v>=1&&v<=49;});
+  if(arr.length>=7){r.numbers=arr.slice(0,7);r.special=arr[6];}
+  saveRec(sortRecords(records));
+  showStatus('editStatus','ok','✓ 已保存');
+  setTimeout(function(){closeEditModal();renderAll();},400);
+}
+
+/* OCR */
+function compressImage(file){
+  return new Promise(function(resolve,reject){
+    var rd=new FileReader();
+    rd.onload=function(e){
+      var img=new Image();
+      img.onload=function(){
+        var maxW=700,w=img.width,h=img.height;
+        if(w>maxW){h=Math.round(h*maxW/w);w=maxW;}
+        var c=document.createElement('canvas');c.width=w;c.height=h;
+        c.getContext('2d').drawImage(img,0,0,w,h);
+        resolve(c.toDataURL('image/jpeg',0.7));
+      };
+      img.onerror=reject;img.src=e.target.result;
+    };
+    rd.onerror=reject;rd.readAsDataURL(file);
+  });
+}
+function ocrNumbers(imageDataUrl){
+  var cfg=loadCfg();
+  if(!cfg.key)return Promise.reject(new Error('未配置 API Key'));
+  var prompt='请识别这张图片里的一排数字，从左到右依次读出每个数字（1-49之间）。严格按格式输出，只用空格分隔的数字：25 02 05 22 20 31 35';
+  return fetch('https://open.bigmodel.cn/api/paas/v4/chat/completions',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key.trim()},
+    body:JSON.stringify({model:'glm-4v-flash',messages:[{role:'user',content:[{type:'text',text:prompt},{type:'image_url',image_url:{url:imageDataUrl}}]}],temperature:0.1})
+  }).then(function(resp){
+    if(!resp.ok)return resp.text().then(function(t){throw new Error('HTTP '+resp.status+'：'+t.slice(0,200));});
+    return resp.json();
+  }).then(function(data){
+    var c=data&&data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content;
+    if(!c)throw new Error('AI 返回为空');
+    var matches=(c||'').match(/\d+/g)||[];
+    var nums=matches.map(function(n){return parseInt(n,10);}).filter(function(v){return v>=1&&v<=49;});
+    if(nums.length>7)nums=nums.slice(-7);
+    return nums;
+  });
+}
+function testApi(){
+  var cfg=loadCfg();
+  if(!cfg.key){showStatus('cfgStatus','err','还没保存 Key');return;}
+  showStatus('cfgStatus','info','测试中...');
+  fetch('https://open.bigmodel.cn/api/paas/v4/chat/completions',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key.trim()},
+    body:JSON.stringify({model:'glm-4-flash',messages:[{role:'user',content:'你好'}],max_tokens:10})
+  }).then(function(resp){
+    if(resp.ok){showStatus('cfgStatus','ok','✓ 连接成功！Key 有效');}
+    else{resp.text().then(function(t){showStatus('cfgStatus','err','失败 HTTP '+resp.status+'：'+t.slice(0,200));});}
+  }).catch(function(err){showStatus('cfgStatus','err','网络失败：'+err.message);});
+}
+function fillManualNums(nums){
+  var ins=document.querySelectorAll('.mNum');
+  for(var i=0;i<ins.length;i++){ins[i].value='';}
+  $('mSpecial').value='';
+  nums.slice(0,6).forEach(function(n,i){ins[i].value=n;});
+  if(nums.length>=7)$('mSpecial').value=nums[6];
+  updateManualHint();
+}
+function updateManualHint(){
+  var ins=document.querySelectorAll('.mNum');
+  var nums=[];
+  for(var i=0;i<ins.length;i++){var v=parseInt(ins[i].value,10);if(v>=1&&v<=49)nums.push(v);}
+  var sp=parseInt($('mSpecial').value,10);if(sp>=1&&sp<=49)nums.push(sp);
+  var el=$('mZodiacHint');if(!el)return;
+  if(!nums.length){el.innerHTML='';return;}
+  var d=$('mDate').value,y=parseInt((d||'').slice(0,4),10)||2026;
+  el.innerHTML='生肖提示：'+nums.map(function(n,i){
+    var z=getZodiac(n,y,d);
+    return '<span style="display:inline-block;text-align:center;margin:2px 6px;"><b>'+String(n).padStart(2,'0')+'</b><br><span style="font-size:11px;color:'+(i===nums.length-1?'#b45309':'#475569')+';">'+z+'</span></span>';
+  }).join('');
+}
+function saveManual(){
+  var issue=$('mIssue').value.trim();var date=$('mDate').value;
+  if(!issue||!date){showStatus('mStatus','err','填期号和日期');return;}
+  var ins=document.querySelectorAll('.mNum');
+  var nums=[];
+  for(var i=0;i<ins.length;i++){var v=parseInt(ins[i].value,10);if(v>=1&&v<=49)nums.push(v);}
+  var sp=parseInt($('mSpecial').value,10);
+  if(!sp||sp<1||sp>49){showStatus('mStatus','err','特码 1-49');return;}
+  if(nums.length<6){showStatus('mStatus','err','前6个填满');return;}
+  nums.push(sp);
+  var records=loadRec();
+  var exist=records.filter(function(r){return r.issue===issue;})[0];
+  var closed=records.filter(function(r){return r.issue!==issue&&r.special!=null;});
+  var rec=recommendFromList(closed);
+  if(exist){
+    exist.date=date;exist.numbers=nums;exist.special=sp;
+    if(!exist.recTails||!exist.recTails.length)exist.recTails=rec.tails;
+    if(!exist.recZodiacs||exist.recZodiacs.length<4)exist.recZodiacs=rec.zodiacs.slice(0,4);
+    if(!exist.recThreeA||!exist.recThreeA.length)exist.recThreeA=rec.threeA;
+    if(!exist.recThreeB||!exist.recThreeB.length)exist.recThreeB=rec.threeB;
+    if(!exist.recSpecial5||!exist.recSpecial5.length)exist.recSpecial5=rec.special5;
+    if(!exist.recSpecial8||!exist.recSpecial8.length)exist.recSpecial8=rec.special8;
+    if(!exist.recSpecial10||!exist.recSpecial10.length)exist.recSpecial10=rec.special10;
+  }else{
+    records.push({issue:issue,date:date,numbers:nums,special:sp,
+      recTails:rec.tails,recZodiacs:rec.zodiacs.slice(0,4),
+      recThreeA:rec.threeA,recThreeB:rec.threeB,
+      recSpecial5:rec.special5,recSpecial8:rec.special8,recSpecial10:rec.special10});
+  }
+  saveRec(sortRecords(records));
+  var n=parseInt(issue,10);if(!isNaN(n))$('mIssue').value=pad3(n+1);
+  ins.forEach(function(el){el.value='';});
+  $('mSpecial').value='';$('mZodiacHint').innerHTML='';
+  showStatus('mStatus','ok','已保存');
+  renderAll();
+  checkGapsAndShow();
+}
+
+/* 大乐透/双色球 */
+function loadDLT(){try{return JSON.parse(stGet(DLT_KEY))||[];}catch(e){return [];}}
+function saveDLT(r){stSet(DLT_KEY,JSON.stringify(r));}
+function renderDLT(){
+  var recs=loadDLT().slice().sort(function(a,b){return (parseInt(a.issue,10)||0)-(parseInt(b.issue,10)||0);}).reverse();
+  $('dltCount').textContent=recs.length;
+  $('dltBody').innerHTML=recs.length===0?'<tr><td colspan="4" class="empty">暂无</td></tr>':recs.map(function(r){
+    var nums=r.a1.map(function(n){return '<span class="ball-red">'+String(n).padStart(2,'0')+'</span>';}).join('')+' '+r.a2.map(function(n){return '<span class="ball-blue">'+String(n).padStart(2,'0')+'</span>';}).join('');
+    return '<tr><td><span class="issue-tag">'+r.issue+'</span></td><td>'+r.date+'</td><td>'+nums+'</td><td><button class="red small" data-dlt-del="'+r.issue+'">删</button></td></tr>';
+  }).join('');
+}
+function loadSSQ(){try{return JSON.parse(stGet(SSQ_KEY))||[];}catch(e){return [];}}
+function saveSSQ(r){stSet(SSQ_KEY,JSON.stringify(r));}
+function renderSSQ(){
+  var recs=loadSSQ().slice().sort(function(a,b){return (parseInt(a.issue,10)||0)-(parseInt(b.issue,10)||0);}).reverse();
+  $('ssqCount').textContent=recs.length;
+  $('ssqBody').innerHTML=recs.length===0?'<tr><td colspan="4" class="empty">暂无</td></tr>':recs.map(function(r){
+    var nums=r.a1.map(function(n){return '<span class="ball-red">'+String(n).padStart(2,'0')+'</span>';}).join('')+' '+r.a2.map(function(n){return '<span class="ball-blue">'+String(n).padStart(2,'0')+'</span>';}).join('');
+    return '<tr><td><span class="issue-tag">'+r.issue+'</span></td><td>'+r.date+'</td><td>'+nums+'</td><td><button class="red small" data-ssq-del="'+r.issue+'">删</button></td></tr>';
+  }).join('');
+}
+function initNav(){
+  var nav=$('sideQuickNav'),toggle=$('sqnToggle'),list=$('sqnList');
+  if(!nav||!toggle||!list)return;
+  toggle.addEventListener('click',function(e){e.stopPropagation();nav.classList.toggle('open');});
+  document.addEventListener('click',function(e){if(!nav.contains(e.target))nav.classList.remove('open');});
+  list.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click',function(e){
+      e.preventDefault();
+      var t=this.getAttribute('data-target');
+      if(t==='top')window.scrollTo(0,0);
+      else{var el=$(t);if(el)window.scrollTo(0,el.getBoundingClientRect().top+window.pageYOffset-14);}
+      nav.classList.remove('open');
+    });
+  });
+}
+function renderAll(){
+  renderRec();
+  renderRecord();
+  renderStats();
+  renderMoney();
+  renderDiary();
+}
+
+function boot(){
+  $('modeTag').textContent=storageMode==='local'?'数据永久保存':'临时保存';
+  if(!stGet(PRESET_FLAG)||!loadRec().length){importPreset();stSet(PRESET_FLAG,'1');}
+  var cfg=loadCfg();
+  if(cfg.key)$('apiKey').value=cfg.key;
+
+  document.querySelectorAll('.tab-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var tab=btn.getAttribute('data-tab');
+      document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+      document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active');});
+      btn.classList.add('active');
+      document.getElementById('tab-'+tab).classList.add('active');
+      if(tab==='dlt')renderDLT();
+      if(tab==='ssq')renderSSQ();
+    });
+  });
+
+  $('saveKey').addEventListener('click',function(){
+    var key=$('apiKey').value.trim();
+    if(!key){showStatus('cfgStatus','err','请输入Key');return;}
+    saveCfg({key:key});showStatus('cfgStatus','ok','✓ 已保存');
+  });
+  $('testKey').addEventListener('click',testApi);
+  $('clearKey').addEventListener('click',function(){
+    var c=loadCfg();delete c.key;saveCfg(c);$('apiKey').value='';showStatus('cfgStatus','ok','已清除');
+  });
+
+  $('gapFixBtn').addEventListener('click',fixGaps);
+  $('lockCurrentBtn').addEventListener('click',lockCurrentRec);
+  $('abcRunBtn').addEventListener('click',runABCLong);
+
+  $('filterIssue').addEventListener('input',renderRecord);
+  $('recordRange').addEventListener('change',renderRecord);
+  $('filterClear').addEventListener('click',function(){$('filterIssue').value='';$('recordRange').value='all';renderRecord();});
+  $('tabWeek').addEventListener('click',function(){currentPeriodTab='week';$('tabWeek').classList.add('active');$('tabMonth').classList.remove('active');renderStats();});
+  $('tabMonth').addEventListener('click',function(){currentPeriodTab='month';$('tabMonth').classList.add('active');$('tabWeek').classList.remove('active');renderStats();});
+  $('periodLatest').addEventListener('click',function(){currentPeriodOrder='latest';$('periodLatest').classList.add('active');$('periodOldest').classList.remove('active');renderStats();});
+  $('periodOldest').addEventListener('click',function(){currentPeriodOrder='oldest';$('periodOldest').classList.add('active');$('periodLatest').classList.remove('active');renderStats();});
+
+  function bindRange(id,setter){
+    document.querySelectorAll('#'+id+' button').forEach(function(b){
+      b.addEventListener('click',function(){
+        document.querySelectorAll('#'+id+' button').forEach(function(x){x.classList.remove('active');});
+        this.classList.add('active');setter(this.getAttribute('data-range'));renderStats();
+      });
+    });
+  }
+  bindRange('statsRangeTabs',function(v){currentStatsRange=v;});
+  bindRange('zodiacRangeTabs',function(v){currentZodiacRange=v;});
+  bindRange('streakRangeTabs',function(v){currentStreakRange=v;});
+  $('trendRange').addEventListener('change',function(){currentTrendRange=parseInt(this.value,10)||30;renderStats();});
+
+  $('mPickImg').addEventListener('click',function(){$('mImgInput').click();});
+  $('mOcrBtn').addEventListener('click',function(){
+    if($('mImgPreview').innerHTML.indexOf('<img')===-1){showStatus('mStatus','err','请先上传截图');return;}
+    var imgSrc=$('mImgPreview').querySelector('img').src;
+    showStatus('mStatus','info','AI 识别中...');
+    ocrNumbers(imgSrc).then(function(nums){
+      if(nums.length<7){showStatus('mStatus','err','只识别出 '+nums.length+' 个');return;}
+      fillManualNums(nums);
+      showStatus('mStatus','ok','✓ 识别成功，请核对后保存');
+    }).catch(function(err){showStatus('mStatus','err','识别失败：'+err.message);});
+  });
+  $('mImgInput').addEventListener('change',function(e){
+    var f=e.target.files[0];if(!f)return;
+    compressImage(f).then(function(dataUrl){
+      $('mImgPreview').innerHTML='<img src="'+dataUrl+'" style="max-width:200px;border-radius:6px;border:1px solid #e2e8f0;">';
+      var c=loadCfg();
+      if(!c.key){showStatus('mStatus','info','截图已保存，配置 API Key 后可点"AI 识别"');return;}
+      showStatus('mStatus','info','AI 识别中...');
+      ocrNumbers(dataUrl).then(function(nums){
+        if(nums.length<7){showStatus('mStatus','err','只识别出 '+nums.length+' 个');return;}
+        fillManualNums(nums);
+        showStatus('mStatus','ok','✓ 识别成功，请核对后保存');
+      }).catch(function(err){showStatus('mStatus','err','识别失败：'+err.message);});
+    });
+    e.target.value='';
+  });
+  $('mSave').addEventListener('click',saveManual);
+  document.querySelectorAll('.mNum').forEach(function(el){el.addEventListener('input',updateManualHint);});
+  $('mSpecial').addEventListener('input',updateManualHint);
+  $('mDate').addEventListener('change',updateManualHint);
+
+  $('betLockAll').addEventListener('click',lockAllRecommendations);
+  $('betAddRow').addEventListener('click',function(){
+    if(!betPlan.length){lockAllRecommendations();return;}
+    betPlan.push({play:'custom',label:'自定义',nums:[],odds:2,amount:5,betsPerNum:1,numCount:1,enabled:true});
+    renderBetPlan();
+  });
+  $('betPlanBody').addEventListener('input',function(e){
+    var t=e.target;
+    if(t.hasAttribute('data-bet-nums')){
+      var idx=parseInt(t.getAttribute('data-bet-nums'),10);
+      betPlan[idx].nums=t.value.trim().split(/[\s,，、]+/).filter(Boolean);
+      betPlan[idx].numCount=defaultNumCount(betPlan[idx]);
+      var tr=t.closest('tr');
+      if(tr){
+        var ncInput=tr.querySelector('[data-bet-numcount]');
+        if(ncInput)ncInput.value=betPlan[idx].numCount;
+        var st=betPlan[idx].numCount*betPlan[idx].betsPerNum*betPlan[idx].amount;
+        tr.querySelector('.subtotal').textContent=st.toFixed(2);
+      }
+      updatePlanSummary();
+    }
+    if(t.hasAttribute('data-bet-numcount')){
+      var i1=parseInt(t.getAttribute('data-bet-numcount'),10);
+      betPlan[i1].numCount=parseInt(t.value,10)||1;
+      var tr1=t.closest('tr');
+      if(tr1){
+        var st1=betPlan[i1].numCount*betPlan[i1].betsPerNum*betPlan[i1].amount;
+        tr1.querySelector('.subtotal').textContent=st1.toFixed(2);
+      }
+      updatePlanSummary();
+    }
+    if(t.hasAttribute('data-bet-bets')){
+      var i2=parseInt(t.getAttribute('data-bet-bets'),10);
+      betPlan[i2].betsPerNum=parseInt(t.value,10)||1;
+      var tr2=t.closest('tr');
+      if(tr2){
+        var st2=betPlan[i2].numCount*betPlan[i2].betsPerNum*betPlan[i2].amount;
+        tr2.querySelector('.subtotal').textContent=st2.toFixed(2);
+      }
+      updatePlanSummary();
+    }
+    if(t.hasAttribute('data-bet-amt')){
+      var i3=parseInt(t.getAttribute('data-bet-amt'),10);
+      betPlan[i3].amount=parseFloat(t.value)||1;
+      var tr3=t.closest('tr');
+      if(tr3){
+        var st3=betPlan[i3].numCount*betPlan[i3].betsPerNum*betPlan[i3].amount;
+        tr3.querySelector('.subtotal').textContent=st3.toFixed(2);
+      }
+      updatePlanSummary();
+    }
+    if(t.hasAttribute('data-bet-odds')){
+      var i4=parseInt(t.getAttribute('data-bet-odds'),10);
+      betPlan[i4].odds=parseFloat(t.value)||1;
+    }
+  });
+  $('betPlanBody').addEventListener('change',function(e){
+    var t=e.target;
+    if(t.hasAttribute('data-bet-ck')){
+      var idx=parseInt(t.getAttribute('data-bet-ck'),10);
+      betPlan[idx].enabled=t.checked;
+      renderBetPlan();
+    }
+  });
+  $('betPlanBody').addEventListener('click',function(e){
+    var b=e.target.closest('button');if(!b)return;
+    if(b.hasAttribute('data-bet-rm')){
+      var idx=parseInt(b.getAttribute('data-bet-rm'),10);
+      betPlan.splice(idx,1);
+      renderBetPlan();
+    }
+  });
+  $('betPlanSave').addEventListener('click',saveBetPlan);
+  $('betPlanCancel').addEventListener('click',function(){$('betPlanWrap').style.display='none';betPlan=[];});
+  $('betClear').addEventListener('click',function(){
+    if(!confirm('清空所有购彩记录？'))return;saveMoney([]);renderMoney();
+  });
+
+  $('editCancelBtn').addEventListener('click',closeEditModal);
+  $('editSaveBtn').addEventListener('click',saveEditModal);
+  $('editModal').addEventListener('click',function(e){if(e.target===$('editModal'))closeEditModal();});
+
+  $('addDiaryBtn').addEventListener('click',function(){
+    $('diaryDate').value=fmtDate(new Date());
+    $('diaryVer').value='';
+    $('diaryChange').value='';
+    $('diaryModal').classList.add('show');
+  });
+  $('diarySaveBtn').addEventListener('click',function(){
+    var date=$('diaryDate').value;var ver=$('diaryVer').value.trim();var change=$('diaryChange').value.trim();
+    if(!date||!change){alert('日期和内容不能空');return;}
+    var diary=loadDiary();
+    diary.push({date:date,ver:ver||'-',change:change});
+    saveDiary(diary);
+    $('diaryModal').classList.remove('show');
+    renderDiary();
+  });
+  $('diaryModal').addEventListener('click',function(e){if(e.target===$('diaryModal'))$('diaryModal').classList.remove('show');});
+
+  $('expBtn').addEventListener('click',function(){
+    var d={records:loadRec(),bets:loadMoney(),diary:loadDiary()};
+    var b=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
+    var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='备份.json';a.click();
+  });
+  $('impBtn').addEventListener('click',function(){$('impFile').click();});
+  $('impFile').addEventListener('change',function(e){
+    var f=e.target.files[0];if(!f)return;
+    var r=new FileReader();
+    r.onload=function(ev){
+      try{
+        var d=JSON.parse(ev.target.result);
+        if(Array.isArray(d))saveRec(d);
+        else{if(d.records)saveRec(d.records);if(d.bets)saveMoney(d.bets);if(d.diary)saveDiary(d.diary);}
+        renderAll();alert('导入成功');
+      }catch(err){alert('失败');}
+    };
+    r.readAsText(f);e.target.value='';
+  });
+  $('wipeBtn').addEventListener('click',function(){
+    var b=this;
+    if(b.getAttribute('data-armed')==='1'){stDel(REC_KEY);b.textContent='清空';b.removeAttribute('data-armed');renderAll();}
+    else{b.textContent='再点一次';b.setAttribute('data-armed','1');setTimeout(function(){b.textContent='清空';b.removeAttribute('data-armed');},5000);}
+  });
+  $('recalcBtn').addEventListener('click',function(){
+    if(!confirm('用当前算法重算所有历史推荐？'))return;
+    var records=sortRecords(loadRec());var count=0;
+    for(var i=1;i<records.length;i++){
+      if(records[i].special==null)continue;
+      var past=records.slice(0,i).filter(function(x){return x.special!=null;});
+      var rec=recommendFromList(past);
+      records[i].recTails=rec.tails;records[i].recZodiacs=rec.zodiacs.slice(0,4);
+      records[i].recThreeA=rec.threeA;records[i].recThreeB=rec.threeB;
+      records[i].recSpecial5=rec.special5;records[i].recSpecial8=rec.special8;records[i].recSpecial10=rec.special10;
+      count++;
+    }
+    saveRec(records);renderAll();alert('✓ 已重算 '+count+' 期');
+  });
+
+  $('dltSave').addEventListener('click',function(){
+    var issue=$('dltIssue').value.trim();var date=$('dltDate').value;
+    if(!issue||!date){showStatus('dltStatus','err','填期号和日期');return;}
+    var a1=[],a2=[];
+    document.querySelectorAll('.dltN1').forEach(function(i){var v=parseInt(i.value,10);if(v>=1&&v<=35)a1.push(v);});
+    document.querySelectorAll('.dltN2').forEach(function(i){var v=parseInt(i.value,10);if(v>=1&&v<=12)a2.push(v);});
+    if(a1.length!==5||a2.length!==2){showStatus('dltStatus','err','前区5后区2');return;}
+    var recs=loadDLT();recs.push({issue:issue,date:date,a1:a1,a2:a2});saveDLT(recs);renderDLT();
+    document.querySelectorAll('.dltN1,.dltN2').forEach(function(i){i.value='';});
+    showStatus('dltStatus','ok','已保存');
+  });
+  $('ssqSave').addEventListener('click',function(){
+    var issue=$('ssqIssue').value.trim();var date=$('ssqDate').value;
+    if(!issue||!date){showStatus('ssqStatus','err','填期号和日期');return;}
+    var a1=[],a2=[];
+    document.querySelectorAll('.ssqN1').forEach(function(i){var v=parseInt(i.value,10);if(v>=1&&v<=33)a1.push(v);});
+    document.querySelectorAll('.ssqN2').forEach(function(i){var v=parseInt(i.value,10);if(v>=1&&v<=16)a2.push(v);});
+    if(a1.length!==6||a2.length!==1){showStatus('ssqStatus','err','红6蓝1');return;}
+    var recs=loadSSQ();recs.push({issue:issue,date:date,a1:a1,a2:a2});saveSSQ(recs);renderSSQ();
+    document.querySelectorAll('.ssqN1,.ssqN2').forEach(function(i){i.value='';});
+    showStatus('ssqStatus','ok','已保存');
+  });
+
+  document.body.addEventListener('click',function(e){
+    var b=e.target.closest?e.target.closest('button'):null;
+    if(!b)return;
+    if(b.hasAttribute('data-edit'))openEditModal(b.getAttribute('data-edit'));
+    else if(b.hasAttribute('data-money-del')){
+      var i=parseInt(b.getAttribute('data-money-del'),10);
+      var bets=loadMoney();bets.splice(i,1);saveMoney(bets);renderMoney();
+    }
+    else if(b.hasAttribute('data-dlt-del')){var ii=b.getAttribute('data-dlt-del');saveDLT(loadDLT().filter(function(x){return x.issue!==ii;}));renderDLT();}
+    else if(b.hasAttribute('data-ssq-del')){var iii=b.getAttribute('data-ssq-del');saveSSQ(loadSSQ().filter(function(x){return x.issue!==iii;}));renderSSQ();}
+  });
+
+  initNav();
+  renderAll();
+  checkGapsAndShow();
+}
+
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+})();
+</script>
+</body>
+</html>
